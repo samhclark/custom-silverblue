@@ -6,7 +6,6 @@ RUN rpm-ostree override remove \
         gnome-tour \
         firefox \
         firefox-langpacks \
-        podman-docker \
     && rpm-ostree install \
         adw-gtk3-theme \
         bootc \
