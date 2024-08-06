@@ -1,7 +1,6 @@
 FROM quay.io/fedora-ostree-desktops/silverblue:40 as silverblue
 
 RUN rpm-ostree override remove \
-        gnome-extensions-app \
         gnome-software-rpm-ostree \
         gnome-terminal-nautilus \
         gnome-tour \
