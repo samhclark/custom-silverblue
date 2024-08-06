@@ -15,7 +15,5 @@ RUN rpm-ostree override remove \
         ptyxis \
         wireguard-tools \
     && systemctl enable rpm-ostreed-automatic.timer \
-    && systemctl enable flatpak-system-update.timer \
-    && systemctl --global enable flatpak-user-update.timer \
     && rpm-ostree cleanup -m \
     && ostree container commit
