@@ -1,7 +1,8 @@
 FROM quay.io/fedora-ostree-desktops/silverblue:40 as silverblue
 
-RUN rpm-ostree override remove \
+RUN rpm-ostree override remove --idempotent \
         gnome-software-rpm-ostree \
+        gnome-terminal \
         gnome-terminal-nautilus \
         gnome-tour \
         firefox \
@@ -9,6 +10,7 @@ RUN rpm-ostree override remove \
     && rpm-ostree install \
         adw-gtk3-theme \
         bootc \
+        code \
         distrobox \
         firewall-config \
         gnome-tweaks \
