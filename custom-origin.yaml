@@ -8,7 +8,6 @@ packages:
   - firewall-config
   - gnome-shell-extension-appindicator
   - gnome-shell-extension-gsconnect
-  - gnome-shell-extension-search-light
   - gnome-tweaks
   - guestfs-tools
   - jetbrains-mono-fonts
