@@ -1,0 +1,33 @@
+packages:
+  - adobe-source-code-pro-fonts
+  - adw-gtk3-theme
+  - bootc
+  - code
+  - distrobox
+  - fira-code-fonts
+  - firewall-config
+  - gnome-shell-extension-appindicator
+  - gnome-shell-extension-gsconnect
+  - gnome-shell-extension-search-light
+  - gnome-tweaks
+  - guestfs-tools
+  - jetbrains-mono-fonts
+  - libvirt-daemon-config-network
+  - libvirt-daemon-kvm
+  - python3-libguestfs
+  - ptyxis
+  - qemu-kvm
+  - virt-install
+  - virt-manager
+  - virt-top
+  - virt-viewer
+  - wireguard-tools
+override-remove:
+  - gnome-software-rpm-ostree
+  - gnome-terminal
+  - gnome-terminal-nautilus
+  - gnome-tour
+  - firefox
+  - firefox-langpacks
+  - toolbox
+  - virtualbox-guest-additions
