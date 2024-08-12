@@ -1,5 +1,6 @@
 FROM quay.io/fedora-ostree-desktops/silverblue:40 as silverblue
 
+COPY docker-ce.repo /etc/yum.repos.d/docker-ce.repo
 COPY vscode.repo /etc/yum.repos.d/vscode.repo
 COPY custom-origin.yaml /etc/rpm-ostree/origin.d/custom-origin.yaml
 
