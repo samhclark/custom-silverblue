@@ -21,6 +21,7 @@ packages:
   - python3-libguestfs
   - ptyxis
   - qemu-kvm
+  - tpm2-pkcs11
   - virt-install
   - virt-manager
   - virt-top
