@@ -22,6 +22,7 @@ packages:
   - ptyxis
   - qemu-kvm
   - tpm2-pkcs11
+  - tpm2-pkcs11-tools
   - virt-install
   - virt-manager
   - virt-top
