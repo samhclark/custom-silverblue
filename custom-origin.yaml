@@ -4,7 +4,6 @@ packages:
   - bootc
   - code
   - containerd.io
-  - distrobox
   - docker-buildx-plugin
   - docker-ce 
   - docker-ce-cli
@@ -35,5 +34,4 @@ override-remove:
   - gnome-tour
   - firefox
   - firefox-langpacks
-  - toolbox
   - virtualbox-guest-additions
