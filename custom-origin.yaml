@@ -17,6 +17,7 @@ packages:
   - jetbrains-mono-fonts
   - libvirt-daemon-config-network
   - libvirt-daemon-kvm
+  - openssh-askpass
   - python3-libguestfs
   - ptyxis
   - qemu-kvm
