@@ -1,5 +1,4 @@
 packages:
-  - adobe-source-code-pro-fonts
   - adw-gtk3-theme
   - bootc
   - code
@@ -8,7 +7,6 @@ packages:
   - docker-ce 
   - docker-ce-cli
   - docker-compose-plugin
-  - fira-code-fonts
   - firewall-config
   - gcc
   - gcc-c++
