@@ -16,7 +16,6 @@ packages:
   - gnome-shell-extension-gsconnect
   - gnome-tweaks
   - guestfs-tools
-  - jetbrains-mono-fonts
   - libvirt-daemon-config-network
   - libvirt-daemon-kvm
   - openssh-askpass
