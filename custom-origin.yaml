@@ -10,6 +10,8 @@ packages:
   - docker-compose-plugin
   - fira-code-fonts
   - firewall-config
+  - gcc
+  - gcc-c++
   - gnome-shell-extension-appindicator
   - gnome-shell-extension-gsconnect
   - gnome-tweaks
