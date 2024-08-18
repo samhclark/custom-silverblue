@@ -13,10 +13,12 @@ packages:
   - gnome-shell-extension-appindicator
   - gnome-shell-extension-gsconnect
   - gnome-tweaks
+  - gtk3-devel
   - guestfs-tools
   - libvirt-daemon-config-network
   - libvirt-daemon-kvm
   - openssh-askpass
+  - pass
   - python3-libguestfs
   - ptyxis
   - qemu-kvm
