@@ -2,23 +2,19 @@ packages:
   - adw-gtk3-theme
   - bootc
   - code
-  - containerd.io
-  - docker-buildx-plugin
-  - docker-ce 
-  - docker-ce-cli
-  - docker-compose-plugin
+  - docker-ce-cli # required for Docker Desktop
   - firewall-config
-  - gcc
-  - gcc-c++
+  - gcc # required for Homebrew
+  - gcc-c++ # required for Homebrew 
   - gnome-shell-extension-appindicator
   - gnome-shell-extension-gsconnect
   - gnome-tweaks
-  - gtk3-devel
+  - gtk3-devel # required for Docker Desktop
   - guestfs-tools
   - libvirt-daemon-config-network
   - libvirt-daemon-kvm
   - openssh-askpass
-  - pass
+  - pass # required for Docker Desktop 
   - python3-libguestfs
   - ptyxis
   - qemu-kvm
