@@ -16,7 +16,6 @@ packages:
   - openssh-askpass
   - pass # required for Docker Desktop 
   - python3-libguestfs
-  - ptyxis
   - qemu-kvm
   - tpm2-pkcs11
   - tpm2-pkcs11-tools
@@ -27,7 +26,6 @@ packages:
   - wireguard-tools
 override-remove:
   - gnome-software-rpm-ostree
-  - gnome-terminal
   - gnome-terminal-nautilus
   - gnome-tour
   - firefox
