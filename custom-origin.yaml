@@ -15,8 +15,10 @@ packages:
   - guestfs-tools
   - libvirt-daemon-config-network
   - libvirt-daemon-kvm
+  - lldb
   - openssh-askpass
   - pass # required for Docker Desktop 
+  - powertop
   - python3-libguestfs
   - qemu-kvm
   - tpm2-pkcs11
