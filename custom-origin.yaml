@@ -1,5 +1,5 @@
 cliwrap: true
-readonly-executables: true
+#readonly-executables: true
 packages:
   - adw-gtk3-theme
   - bootc
