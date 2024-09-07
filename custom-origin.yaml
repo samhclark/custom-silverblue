@@ -2,6 +2,7 @@ cliwrap: true
 #readonly-executables: true
 packages:
   - adw-gtk3-theme
+  - binutils
   - bootc
   - code
   - docker-ce-cli # required for Docker Desktop
