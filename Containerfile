@@ -28,7 +28,7 @@ RUN --mount=type=bind,from=files,source=packages.json,target=/etc/packages.json 
     && rpm -Uvh docker-desktop-x86_64.rpm \
     && mv /var/opt/docker-desktop /usr/lib/opt/docker-desktop \
     && echo 'L /opt/docker-desktop - - - - ../../usr/lib/opt/docker-desktop' > /usr/lib/tmpfiles.d/docker-desktop.conf \
-    && find /usr -type f -executable -exec chmod a-w {} + \
+    && find /usr/bin -type f -executable -exec chmod a-w {} + \
     && rpm-ostree cleanup -m
 
 RUN ostree container commit
