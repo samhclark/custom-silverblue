@@ -7,10 +7,13 @@ FROM quay.io/fedora-ostree-desktops/silverblue:40 as silverblue
 
 COPY docker-ce.repo /etc/yum.repos.d/docker-ce.repo
 COPY vscode.repo /etc/yum.repos.d/vscode.repo
-COPY custom-origin.yaml /etc/rpm-ostree/origin.d/custom-origin.yaml
+COPY packages.json /etc/packages.json 
 
-RUN rpm-ostree ex rebuild \
+RUN rpm-ostree override remove \
+        $(cat /etc/packages.json | jq -r '"--install=\(.add[].name)"' | xargs) \
+        $(cat /etc/packages.json | jq -r '.remove[].name' | xargs) \
     && systemctl enable rpm-ostreed-automatic.timer
+
 
 # Copying this pattern from here https://github.com/coreos/rpm-ostree/issues/233#issuecomment-1301194050
 # There have been updates since this was written in Nov 2022 but as of July 2024, this is still the 

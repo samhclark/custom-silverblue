@@ -1,0 +1,115 @@
+{
+    "add": [
+      {
+        "name": "code",
+        "_comment": "Visual Studio Code needs to be on the host because it's an Electron app"
+      },
+      {
+        "name": "docker-ce-cli",
+        "_comment": "Required for Docker Desktop"
+      },
+      {
+        "name": "gcc",
+        "_comment": "Required for Homebrew"
+      },
+      {
+        "name": "gcc-c++",
+        "_comment": "Required for Homebrew"
+      },
+      {
+        "name": "gnome-tweaks",
+        "_comment": "Lets me put the titlebar buttons on the left"
+      },
+      {
+        "name": "gtk3-devel",
+        "_comment": "Required for Docker Desktop"
+      },
+      {
+        "name": "guestfs-tools",
+        "_comment": "Optiional package of Virtualization group"
+      },
+      {
+        "name": "libvirt-daemon-config-network",
+        "_comment": "Default package of Virtualization group"
+      },
+      {
+        "name": "libvirt-daemon-kvm",
+        "_comment": "Default package of Virtualization group"
+      },
+      {
+        "name": "lldb",
+        "_comment": "Debugger for Rust from Helix"
+      },
+      {
+        "name": "openssh-askpass",
+        "_comment": "Needed to prompt for PIN for TPM-bound SSH keys"
+      },
+      {
+        "name": "pass",
+        "_comment": "Required for Docker Desktop"
+      },
+      {
+        "name": "powertop",
+        "_comment": "Power saving settings manager"
+      },
+      {
+        "name": "python3-libguestfs",
+        "_comment": "Optiional package of Virtualization group"
+      },
+      {
+        "name": "qemu-kvm",
+        "_comment": "Default package of Virtualization group"
+      },
+      {
+        "name": "tpm2-pkcs11",
+        "_comment": "Support TPM-bound SSH keys"
+      },
+      {
+        "name": "tpm2-pkcs11-tools",
+        "_comment": "Support TPM-bound SSH keys"
+      },
+      {
+        "name": "virt-install",
+        "_comment": "Mandataory package of Virtualization group"
+      },
+      {
+        "name": "virt-manager",
+        "_comment": "Default package of Virtualization group"
+      },
+      {
+        "name": "virt-top",
+        "_comment": "Optiional package of Virtualization group"
+      },
+      {
+        "name": "virt-viewer",
+        "_comment": "Default package of Virtualization group"
+      }
+    ],
+    "remove": [
+      {
+        "name": "gnome-software-rpm-ostree",
+        "_comment": "Don't want to manage rom-ostree software from a GUI in the OS"
+      },
+      {
+        "name": "gnome-terminal-nautilus",
+        "_comment": "Don't want Gnome Terminal in the file browser"
+      },
+      {
+        "name": "gnome-tour",
+        "_comment": "Don't want the tour"
+      },
+      {
+        "name": "firefox",
+        "_comment": "Prefer the Firefox Flatpak. The one from the repos is old."
+      },
+      {
+        "name": "firefox-langpacks",
+        "_comment": "Must remove this when removing Firefox."
+      },
+      {
+        "name": "virtualbox-guest-additions",
+        "_comment": "This OS won't be used as a VirtualBox guest"
+      }
+    ]
+  }
+  
