@@ -1,23 +1,27 @@
-FROM quay.io/fedora-ostree-desktops/silverblue:40 as docker-desktop-rpm 
+ARG silverblue_version=40
+FROM scratch as packages
+COPY packages.json /packages.json
+
+ARG silverblue_version
+FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version} as docker-desktop-rpm
 COPY checksums checksums
-ADD https://desktop.docker.com/linux/main/amd64/160616/docker-desktop-x86_64.rpm docker-desktop-x86_64.rpm 
+ADD https://desktop.docker.com/linux/main/amd64/160616/docker-desktop-x86_64.rpm docker-desktop-x86_64.rpm
 RUN sha256sum -c checksums
 
-FROM quay.io/fedora-ostree-desktops/silverblue:40 as silverblue
+ARG silverblue_version
+FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version} as silverblue
 
 COPY docker-ce.repo /etc/yum.repos.d/docker-ce.repo
 COPY vscode.repo /etc/yum.repos.d/vscode.repo
-COPY packages.json /etc/packages.json 
 
-RUN rpm-ostree override remove \
+RUN --mount=type=bind,from=packages,source=packages.json,target=/etc/packages.json rpm-ostree override remove \
         $(cat /etc/packages.json | jq -r '"--install=\(.add[].name)"' | xargs) \
         $(cat /etc/packages.json | jq -r '.remove[].name' | xargs) \
     && systemctl enable rpm-ostreed-automatic.timer
 
-
 # Copying this pattern from here https://github.com/coreos/rpm-ostree/issues/233#issuecomment-1301194050
-# There have been updates since this was written in Nov 2022 but as of July 2024, this is still the 
-# recommended way https://github.com/coreos/fedora-coreos-tracker/issues/1681#issuecomment-2211137520 
+# There have been updates since this was written in Nov 2022 but as of July 2024, this is still the
+# recommended way https://github.com/coreos/fedora-coreos-tracker/issues/1681#issuecomment-2211137520
 COPY --from=docker-desktop-rpm docker-desktop-x86_64.rpm docker-desktop-x86_64.rpm
 RUN mkdir /var/opt \
     && rpm -Uvh docker-desktop-x86_64.rpm \
