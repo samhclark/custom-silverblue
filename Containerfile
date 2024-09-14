@@ -1,7 +1,6 @@
 ARG silverblue_version=40
 FROM scratch as files
 COPY packages.json /packages.json
-COPY make_read_only.sh /make_read_only.sh
 
 ARG silverblue_version
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version} as docker-desktop-rpm
