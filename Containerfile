@@ -14,24 +14,21 @@ FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version} as silverbl
 COPY docker-ce.repo /etc/yum.repos.d/docker-ce.repo
 COPY vscode.repo /etc/yum.repos.d/vscode.repo
 
+# Copying the pattern here for installing Docker Desktop
+# https://github.com/coreos/rpm-ostree/issues/233#issuecomment-1301194050
+# There have been updates since this was written in Nov 2022 but as of July 2024, this is still the
+# recommended way https://github.com/coreos/fedora-coreos-tracker/issues/1681#issuecomment-2211137520
 RUN --mount=type=bind,from=files,source=packages.json,target=/etc/packages.json \
+    --mount=type=bind,from=docker-desktop-rpm,source=/docker-desktop-x86_64.rpm,target=/docker-desktop-x86_64.rpm \
     rpm-ostree override remove \
         $(cat /etc/packages.json | jq -r '"--install=\(.add[].name)"' | xargs) \
         $(cat /etc/packages.json | jq -r '.remove[].name' | xargs) \
-    && systemctl enable rpm-ostreed-automatic.timer
-
-# Copying this pattern from here https://github.com/coreos/rpm-ostree/issues/233#issuecomment-1301194050
-# There have been updates since this was written in Nov 2022 but as of July 2024, this is still the
-# recommended way https://github.com/coreos/fedora-coreos-tracker/issues/1681#issuecomment-2211137520
-# COPY --from=docker-desktop-rpm docker-desktop-x86_64.rpm docker-desktop-x86_64.rpm
-RUN --mount=type=bind,from=docker-desktop-rpm,source=/docker-desktop-x86_64.rpm,target=/docker-desktop-x86_64.rpm \
-    mkdir /var/opt \
+    && systemctl enable rpm-ostreed-automatic.timer \
+    && mkdir /var/opt \
     && rpm -Uvh docker-desktop-x86_64.rpm \
     && mv /var/opt/docker-desktop /usr/lib/opt/docker-desktop \
-    && echo 'L /opt/docker-desktop - - - - ../../usr/lib/opt/docker-desktop' > /usr/lib/tmpfiles.d/docker-desktop.conf
+    && echo 'L /opt/docker-desktop - - - - ../../usr/lib/opt/docker-desktop' > /usr/lib/tmpfiles.d/docker-desktop.conf \
+    && find /usr -type f -executable -exec chmod a-w {} + \
+    && rpm-ostree cleanup -m
 
-# Make executables as read-only
-RUN find /usr -type f -executable -exec chmod a-w {} +
-
-RUN rpm-ostree cleanup -m \
-    && ostree container commit
+RUN ostree container commit
