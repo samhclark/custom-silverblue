@@ -2,7 +2,9 @@ ARG silverblue_version=40
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version} as silverblue
 
 COPY docker-ce.repo /etc/yum.repos.d/docker-ce.repo
+COPY docker-release-public-key.asc /etc/pki/rpm-gpg/docker-release-public-key.asc
 COPY vscode.repo /etc/yum.repos.d/vscode.repo
+COPY microsoft-release-public-key.asc /etc/pki/rpm-gpg/microsoft-release-public-key.asc
 
 ADD https://desktop.docker.com/linux/main/amd64/160616/docker-desktop-x86_64.rpm /docker-desktop-x86_64.rpm
 
