@@ -1,5 +1,5 @@
 ARG silverblue_version=40
-FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version} as silverblue
+FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
 COPY docker-ce.repo /etc/yum.repos.d/docker-ce.repo
 COPY docker-release-public-key.asc /etc/pki/rpm-gpg/docker-release-public-key.asc
