@@ -10,7 +10,6 @@ ADD https://desktop.docker.com/linux/main/amd64/160616/docker-desktop-x86_64.rpm
 # https://github.com/coreos/rpm-ostree/issues/233#issuecomment-1301194050
 # There have been updates since this was written in Nov 2022 but as of July 2024, this is still the
 # recommended way https://github.com/coreos/fedora-coreos-tracker/issues/1681#issuecomment-2211137520
-#--mount=type=bind,source=docker-desktop-160616-x86_64.rpm,target=/docker-desktop-x86_64.rpm,z \
 RUN --mount=type=bind,source=packages.json,target=/packages.json,z \
     rpm-ostree override remove \
         $(jq -r '"--install=\(.add[].name)"' /packages.json | xargs) \
