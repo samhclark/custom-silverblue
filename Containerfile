@@ -7,6 +7,7 @@ COPY vscode.repo /etc/yum.repos.d/vscode.repo
 COPY microsoft-release-public-key.asc /etc/pki/rpm-gpg/microsoft-release-public-key.asc
 
 ADD https://desktop.docker.com/linux/main/amd64/160616/docker-desktop-x86_64.rpm /docker-desktop-x86_64.rpm
+RUN --mount=type=bind,source=checksums,target=/checksums,z sha256sum -c checksums
 
 # Copying the pattern for installing Docker Desktop from here
 # https://github.com/coreos/rpm-ostree/issues/233#issuecomment-1301194050
