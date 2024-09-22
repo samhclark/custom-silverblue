@@ -21,6 +21,12 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v4
+      
+      - name: Install cosign
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: sigstore/cosign-installer@v3.6.0
+        with:
+          cosign-release: 'v2.4.0'
 
       # Build image using Buildah action
       - name: Build Image
@@ -34,6 +40,14 @@ jobs:
             ${{ github.sha }}
             40
           oci: false
+      
+      - name: Log in to GitHub Container Registry
+        uses: redhat-actions/podman-login@v1
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io/${{ github.repository_owner }}
 
       - name: Push To GHCR
         uses: redhat-actions/push-to-registry@v2
@@ -48,13 +62,15 @@ jobs:
           extra-args: |
             --disable-content-trust
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        if: github.event_name != 'pull_request'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Sign the published OCI image
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          digest: ${{ steps.push.outputs.digest }}
+          fully_qualified_image_names_json: ${{ steps.push.outputs.registry-paths }} 
+        run: >
+          echo "${fully_qualified_image_names_json}" 
+          | jq -r '.[]' 
+          | xargs -I {} cosign sign --yes "{}@${digest}"
 
       - name: Echo outputs
         if: github.event_name != 'pull_request'
