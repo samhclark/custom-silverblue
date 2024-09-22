@@ -7,24 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_custom_silverblue:
-    name: main
+  build-custom-silverblue:
+    name: Build, sign, then push
     runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: write
       id-token: write
-    strategy:
-      fail-fast: false
 
     steps:
-      # Checkout push-to-registry action GitHub repository
-      - name: Checkout Push to Registry action
+      - name: Checkout
         uses: actions/checkout@v4
+      
+      - name: Install cosign
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: sigstore/cosign-installer@v3.6.0
+        with:
+          cosign-release: 'v2.4.0'
 
-      # Build image using Buildah action
-      - name: Build Image
-        id: build_image
+      - name: Build image
+        id: build
         uses: redhat-actions/buildah-build@v2
         with:
           containerfiles: |
@@ -33,31 +35,35 @@ jobs:
           tags: |
             ${{ github.sha }}
             40
-          oci: false
-
-      - name: Push To GHCR
-        uses: redhat-actions/push-to-registry@v2
-        id: push
-        if: github.event_name != 'pull_request'
+      
+      - name: Log in to GitHub Container Registry
+        uses: redhat-actions/podman-login@v1
+        if: ${{ github.event_name != 'pull_request' }}
         with:
-          image: ${{ steps.build_image.outputs.image }}
-          tags: ${{ steps.build_image.outputs.tags }}
-          registry: ghcr.io/${{ github.repository_owner }}
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-          extra-args: |
-            --disable-content-trust
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        if: github.event_name != 'pull_request'
-        with:
-          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io/${{ github.repository_owner }}
 
-      - name: Echo outputs
+      - name: Push to GitHub Container Registry
+        uses: redhat-actions/push-to-registry@v2
+        id: push
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          image: ${{ steps.build.outputs.image }}
+          tags: ${{ steps.build.outputs.tags }}
+          registry: ghcr.io/${{ github.repository_owner }}
+
+      - name: Sign the published OCI image
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          digest: ${{ steps.push.outputs.digest }}
+          fully_qualified_image_names_json: ${{ steps.push.outputs.registry-paths }} 
+        run: >
+          echo "${fully_qualified_image_names_json}" 
+          | jq -r '.[]' 
+          | xargs -I {} cosign sign --yes "{}@${digest}"
+
+      - name: Echo outputs for auditing
         if: github.event_name != 'pull_request'
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
-
