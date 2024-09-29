@@ -18,6 +18,8 @@ jobs:
       contents: read
       id-token: write
       packages: write
+    env:
+      silverblue_version: "41"
 
     steps:
       - name: Checkout
@@ -33,13 +35,15 @@ jobs:
         id: build
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
+          build-args: |
+            silverblue_version=$silverblue_version
           containerfiles: |
             ./Containerfile
           image: custom-silverblue
           tags: |
             ${{ github.sha }}
-            40
-
+            $silverblue_version
+      
       - name: Log in to GitHub Container Registry
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         if: ${{ github.event_name != 'pull_request' }}
