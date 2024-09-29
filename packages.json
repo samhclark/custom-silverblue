@@ -87,10 +87,6 @@
         "_comment": "Don't want to manage rom-ostree software from a GUI in the OS"
       },
       {
-        "name": "gnome-terminal-nautilus",
-        "_comment": "Don't want Gnome Terminal in the file browser"
-      },
-      {
         "name": "gnome-tour",
         "_comment": "Don't want the tour"
       },

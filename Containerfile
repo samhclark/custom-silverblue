@@ -1,8 +1,7 @@
-ARG silverblue_version=40
+ARG silverblue_version=41
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
-COPY cosign.pub /etc/pki/cosign/cosign.pub
-COPY overlay-root/etc/ /etc/
+COPY overlay-root/ /
 
 RUN mkdir -p /var/opt \
     && mkdir -p /usr/lib/opt/google \
