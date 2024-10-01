@@ -35,6 +35,19 @@ jobs:
           tags: |
             ${{ github.sha }}
             40
+          extra-args: |
+            --compression-format=zstd:chunked
+
+      - name: Add metadata to images
+        id: meta
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: |
+            ${{ steps.build.outputs.image }}
+          tags: ${{ steps.build.outputs.tags }}
+          sep-tags: " "
+          annotations: |
+            io.github.containers.compression.zstd=true
       
       - name: Log in to GitHub Container Registry
         uses: redhat-actions/podman-login@v1
