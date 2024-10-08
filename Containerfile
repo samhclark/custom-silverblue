@@ -6,8 +6,8 @@ COPY microsoft-release-public-key.asc /etc/pki/rpm-gpg/microsoft-release-public-
 
 RUN --mount=type=bind,source=packages.json,target=/packages.json,z \
     rpm-ostree override remove \
-        $(jq -r '"--install=\(.add[].name)"' /packages.json | xargs) \
-        $(jq -r '.remove[].name' /packages.json | xargs) \
+        $(jq -r '"--install=\(.add[].name)"' /packages.json | paste -d" " -) \
+        $(jq -r '.remove[].name' /packages.json | paste -d" " -) \
     && systemctl enable rpm-ostreed-automatic.timer \
     && rpm-ostree cleanup --repomd
 
