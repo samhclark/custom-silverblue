@@ -17,6 +17,10 @@
         "_comment": "Lets me put the titlebar buttons on the left"
       },
       {
+        "name": "google-chrome-stable",
+        "_comment": "Real upstream Google Chrome. Being in a Flatpak breaks its sandbox."
+      },
+      {
         "name": "guestfs-tools",
         "_comment": "Optiional package of Virtualization group"
       },
