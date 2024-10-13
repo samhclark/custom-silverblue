@@ -6,24 +6,22 @@ on:
     - cron: '5 3 * * *'  # 3am-ish UTC everyday (timed against official fedora container pushes)
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
   build-custom-silverblue:
     name: Build, sign, then push
     runs-on: ubuntu-24.04
     permissions:
+      attestations: write
       contents: read
-      packages: write
       id-token: write
+      packages: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
-      
-      - name: Install cosign
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
-        with:
-          cosign-release: 'v2.4.1'
 
       - name: Build image
         id: build
@@ -35,14 +33,14 @@ jobs:
           tags: |
             ${{ github.sha }}
             40
-      
+
       - name: Log in to GitHub Container Registry
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         if: ${{ github.event_name != 'pull_request' }}
         with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          registry: ghcr.io/${{ github.repository_owner }}
+          registry: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
       - name: Push to GitHub Container Registry
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
@@ -51,17 +49,15 @@ jobs:
         with:
           image: ${{ steps.build.outputs.image }}
           tags: ${{ steps.build.outputs.tags }}
-          registry: ghcr.io/${{ github.repository_owner }}
+          registry: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
-      - name: Sign the published OCI image
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@1c608d11d69870c2092266b3f9a6f3abbf17002c # v1.4.3
         if: ${{ github.event_name != 'pull_request' }}
-        env:
-          digest: ${{ steps.push.outputs.digest }}
-          fully_qualified_image_names_json: ${{ steps.push.outputs.registry-paths }} 
-        run: >
-          echo "${fully_qualified_image_names_json}" 
-          | jq -r '.[]' 
-          | xargs -I {} cosign sign --yes "{}@${digest}"
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ steps.build.outputs.image }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
 
       - name: Echo outputs for auditing
         if: github.event_name != 'pull_request'
