@@ -1,11 +1,15 @@
 ARG silverblue_version=40
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
-COPY vscode.repo /etc/yum.repos.d/vscode.repo
-COPY microsoft-release-public-key.asc /etc/pki/rpm-gpg/microsoft-release-public-key.asc
+COPY overlay-root/etc/ /etc/
+
+RUN mkdir -p /var/opt \
+    && mkdir -p /usr/lib/opt/google \
+    && ln -s /usr/lib/opt/google /var/opt/google
 
 RUN --mount=type=bind,source=packages.json,target=/packages.json,z \
-    rpm-ostree override remove \
+    rpm --import /etc/pki/rpm-gpg/google-linux-public-key.asc \
+    && rpm-ostree override remove \
         $(jq -r '"--install=\(.add[].name)"' /packages.json | paste -d" " -) \
         $(jq -r '.remove[].name' /packages.json | paste -d" " -) \
     && systemctl enable rpm-ostreed-automatic.timer \
