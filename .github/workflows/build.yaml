@@ -17,17 +17,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
       
       - name: Install cosign
         if: ${{ github.event_name != 'pull_request' }}
-        uses: sigstore/cosign-installer@v3.6.0
+        uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da # v3.7.0
         with:
-          cosign-release: 'v2.4.0'
+          cosign-release: 'v2.4.1'
 
       - name: Build image
         id: build
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
           containerfiles: |
             ./Containerfile
@@ -37,7 +37,7 @@ jobs:
             40
       
       - name: Log in to GitHub Container Registry
-        uses: redhat-actions/podman-login@v1
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         if: ${{ github.event_name != 'pull_request' }}
         with:
           username: ${{ github.actor }}
@@ -45,7 +45,7 @@ jobs:
           registry: ghcr.io/${{ github.repository_owner }}
 
       - name: Push to GitHub Container Registry
-        uses: redhat-actions/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
         id: push
         if: ${{ github.event_name != 'pull_request' }}
         with:
