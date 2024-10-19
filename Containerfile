@@ -5,7 +5,8 @@ COPY overlay-root/etc/ /etc/
 
 RUN mkdir -p /var/opt \
     && mkdir -p /usr/lib/opt/google \
-    && ln -s /usr/lib/opt/google /var/opt/google
+    && ln -s /usr/lib/opt/google /var/opt/google \
+    && echo 'L /opt/google - - - - ../../usr/lib/opt/google' > /usr/lib/tmpfiles.d/google-chrome.conf
 
 RUN --mount=type=bind,source=packages.json,target=/packages.json,z \
     rpm --import /etc/pki/rpm-gpg/google-linux-public-key.asc \
