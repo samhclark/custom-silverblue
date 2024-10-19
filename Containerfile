@@ -1,6 +1,7 @@
 ARG silverblue_version=40
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
+COPY cosign.pub /etc/pki/cosign/cosign.pub
 COPY overlay-root/etc/ /etc/
 
 RUN mkdir -p /var/opt \
