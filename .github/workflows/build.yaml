@@ -75,7 +75,7 @@ jobs:
         run: >
           echo "${fully_qualified_image_names_json}" 
           | jq -r '.[]' 
-          | xargs -I {} cosign sign --key=env://COSIGN_PRIVATE_KEY "{}@${digest}"
+          | xargs -I {} cosign sign --yes --key=env://COSIGN_PRIVATE_KEY "{}@${digest}"
       
       - name: Echo outputs for auditing
         if: github.event_name != 'pull_request'
