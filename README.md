@@ -2,6 +2,51 @@
 
 Following Jorge Castro's lead and making my own spin on Silverblue
 
+## Rebasing onto this image
+
+From a normal Silverblue install, or the previous `:40` version, you can rebase onto this image.
+
+The image is signed. 
+Bootstrap the process by downloading the cosign public key for verification.
+
+```
+mkdir -p /etc/pki/cosign
+wget -O /etc/pki/cosign/cosign.pub https://raw.githubusercontent.com/samhclark/custom-silverblue/refs/heads/main/cosign.pub
+printf '55e391488bbbfe28209e09963edf38a612e306572b2dd72bbcc97402690ff000  /etc/pki/cosign/cosign.pub' | sha256sum --check -
+chmod 555 /etc/pki/cosign
+chmor 444 /etc/pki/cosign/cosign.pub
+sudo chattr +i /etc/pki/cosign/cosign.pub
+```
+
+Edit your existing `/etc/containers/policy.json` to include a section like this:
+
+```json
+{
+    "transports": {
+        "docker": {
+            "ghcr.io/samhclark/custom-silverblue:40": [
+                {
+                    "type": "insecureAcceptAnything"
+                }
+            ],
+            "ghcr.io/samhclark/custom-silverblue": [
+                {
+                    "type": "sigstoreSigned",
+                    "keyPath": "/etc/pki/cosign/cosign.pub",
+                    "signedIdentity": "exactRepository"
+                }
+            ],
+        }
+    }
+}
+```
+
+Then, it's time to rebase
+
+```
+rpm-ostree rebase ostree-image-signed:registry:ghcr.io/samhclark/custom-silverblue:41
+```
+
 ## Google Linux Signing Keys
 
 Google does something weird with their keys for signing RPMs.
