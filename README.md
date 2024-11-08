@@ -2,6 +2,41 @@
 
 Following Jorge Castro's lead and making my own spin on Silverblue
 
+## Rebasing onto this image
+
+This bootstrapping process helps get the public keys onto your machine 
+and makes sure everything is configured right. 
+
+From another Silverblue based image, first, rebase onto the _unverified_ image.
+
+```
+rpm-ostree rebase ostree-unverified-registry:ghcr.io/samhclark/custom-silverblue:41
+```
+
+Optional: Manually verify that the image you just rebased onto is signed.
+
+```
+$ wget -O - https://raw.githubusercontent.com/samhclark/custom-silverblue/refs/heads/main/overlay-root/usr/etc/pki/cosign/cosign.pub \
+    | cosign verify --key /dev/stdin ghcr.io/samhclark/custom-silverblue@$( \
+        rpm-ostree status \
+        | head -n 7 \
+        | grep -o 'sha256:[a-f0-9]\{64\}' \
+    )
+```
+
+If the above command fails (returns with a non-zero exit code), then you should abort the rebase
+
+```
+rpm-ostree cleanup --pending
+```
+
+Assuming it succeeded, then reboot: `systemctl reboot`.
+After that, rebase onto the signed image. 
+
+```
+rpm-ostree rebase ostree-image-signed:docker://ghcr.io/samhclark/custom-silverblue:41
+```
+
 ## Google Linux Signing Keys
 
 Google does something weird with their keys for signing RPMs.
