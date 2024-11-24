@@ -14,7 +14,7 @@
             "ghcr.io/samhclark": [
                 {
                     "type": "sigstoreSigned",
-                    "keyPath": "/etc/pki/cosign/cosign.pub",
+                    "keyPath": "/usr/etc/pki/cosign/cosign.pub",
                     "signedIdentity": {
                         "type": "matchRepository"
                     }
