@@ -20,7 +20,6 @@ jobs:
       namespace: samhclark
       image_name: custom-silverblue
       tags: |
-        ${{ github.sha }}
         41
     secrets:
       cosign_password: ${{ secrets.COSIGN_PASSWORD }}
