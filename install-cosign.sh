@@ -4,6 +4,7 @@
 
 runner_arch="$1"
 workdir="$2" # Should be $RUNNER_TEMP
+toolsdir="${HOME}/tools"
 
 tag="v2.4.3"
 commit="6a7abbf3ae7eb6949883a80c8f6007cc065d2dfb"
@@ -21,8 +22,9 @@ log_fatal_die() {
 set -e
 trap "popd >/dev/null" EXIT
 pushd "${workdir}" > /dev/null
-mkdir -p "${HOME}/tools"
-echo "${HOME}/tools" >> $GITHUB_PATH
+mkdir -p "${toolsdir}"
+export PATH="$PATH:${toolsdir}" # makes it available in this step
+echo "${toolsdir}" >> $GITHUB_PATH # makes it availabe in later steps
 
 # Clone the repo
 git clone -b "${tag}" https://github.com/sigstore/cosign.git
