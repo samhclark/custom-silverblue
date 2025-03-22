@@ -51,12 +51,8 @@ jobs:
           tags: ${{ inputs.tags }}
 
       - name: Log in to Container Registry
-        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
-        if: ${{ github.event_name != 'pull_request' }}
-        with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: ${{ inputs.registry }}/${{ inputs.namespace }}
+        shell: bash
+        run: ./log-in-to-registry.sh "${{ github.actor }}" "${{ secrets.GITHUB_TOKEN }}" "${{ inputs.registry }}/${{ inputs.namespace }}"
 
       - name: Push to Container Registry
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
