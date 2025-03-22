@@ -5,6 +5,10 @@
         "_comment": "Visual Studio Code needs to be on the host because it's an Electron app"
       },
       {
+        "name": "docker",
+        "_comment": "Installs containerd, moby-engine, and runc"
+      },
+      {
         "name": "gcc",
         "_comment": "Required for Homebrew"
       },
@@ -39,10 +43,6 @@
       {
         "name": "openssh-askpass",
         "_comment": "Needed to prompt for PIN for TPM-bound SSH keys"
-      },
-      {
-        "name": "docker",
-        "_comment": "Installs containerd, moby-engine, and runc"
       },
       {
         "name": "powertop",
