@@ -39,5 +39,6 @@ fi
 # Build and install cosign
 go install ./cmd/cosign
 cp "$(go env GOPATH)/bin/cosign" "${HOME}/tools/cosign"
+log_info "Installed cosign $(cosign version --json | jq -r '.gitVersion')"
 
 exit 0
