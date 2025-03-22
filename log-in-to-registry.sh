@@ -17,6 +17,7 @@ log_info "Using $(podman -v)"
 podman login \
     --username "$username" \
     --password "$password" \
+    --compat-auth-file "${HOME}/.docker/config.json" \
     "$registry"
 
 log_info "Successfully logged in to $registry as $username"
