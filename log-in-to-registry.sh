@@ -19,4 +19,6 @@ podman login \
     --password "$password" \
     "$registry"
 
+log_info "Successfully logged in to $registry as $username"
+
 exit 0
