@@ -10,7 +10,7 @@ and makes sure everything is configured right.
 From another Silverblue based image, first, rebase onto the _unverified_ image.
 
 ```
-rpm-ostree rebase ostree-unverified-registry:ghcr.io/samhclark/custom-silverblue:41
+rpm-ostree rebase ostree-unverified-registry:ghcr.io/samhclark/custom-silverblue:42
 ```
 
 Optional: Manually verify that the image you just rebased onto is signed.
@@ -34,14 +34,13 @@ Assuming it succeeded, then reboot: `systemctl reboot`.
 After that, rebase onto the signed image. 
 
 ```
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/samhclark/custom-silverblue:41
+rpm-ostree rebase ostree-image-signed:docker://ghcr.io/samhclark/custom-silverblue:42
 ```
 
 ## Google Linux Signing Keys
 
 Google does something weird with their keys for signing RPMs.
 They add new subkeys every year or so and start signing with that.
-The subkey 
 When things start breaking eventually, get the new key with:
 
 ```
