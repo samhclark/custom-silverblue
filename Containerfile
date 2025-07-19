@@ -14,6 +14,7 @@ RUN --mount=type=bind,source=packages.json,target=/packages.json,z \
         $(jq -r '"--install=\(.add[].name)"' /packages.json | paste -d" " -) \
         $(jq -r '.remove[].name' /packages.json | paste -d" " -) \
     && systemctl enable rpm-ostreed-automatic.timer \
+    && systemctl enable tailscaled \
     && rpm-ostree cleanup --repomd
 
 RUN ostree container commit

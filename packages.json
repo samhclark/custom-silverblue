@@ -57,6 +57,10 @@
         "_comment": "Default package of Virtualization group"
       },
       {
+        "name": "tailscale",
+        "_comment": "You know it, you love it."
+      },
+      {
         "name": "tpm2-pkcs11",
         "_comment": "Support TPM-bound SSH keys"
       },
