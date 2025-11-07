@@ -1,4 +1,4 @@
-ARG silverblue_version=42
+ARG silverblue_version=43
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
 COPY overlay-root/ /
@@ -9,7 +9,8 @@ RUN mkdir -p /var/opt \
     && echo 'L /opt/google - - - - ../../usr/lib/opt/google' > /usr/lib/tmpfiles.d/google-chrome.conf
 
 RUN --mount=type=bind,source=packages.json,target=/packages.json,z \
-    rpm --import /etc/pki/rpm-gpg/google-linux-public-key.asc \
+    rpm -qa gpg-pubkey* --qf '%{NAME}-%{VERSION}-%{RELEASE} %{PACKAGER}\n' | grep 'linux-packages-keymaster@google.com' | sed 's/ .*$//' | xargs -r rpm -e \
+    && rpm --import /etc/pki/rpm-gpg/google-linux-public-key.asc \
     && rpm-ostree override remove \
         $(jq -r '"--install=\(.add[].name)"' /packages.json | paste -d" " -) \
         $(jq -r '.remove[].name' /packages.json | paste -d" " -) \
