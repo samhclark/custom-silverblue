@@ -37,10 +37,6 @@
         "_comment": "Default package of Virtualization group"
       },
       {
-        "name": "lldb",
-        "_comment": "Debugger for Rust from Helix"
-      },
-      {
         "name": "openssh-askpass",
         "_comment": "Needed to prompt for PIN for TPM-bound SSH keys"
       },
