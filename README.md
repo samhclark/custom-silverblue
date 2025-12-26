@@ -73,3 +73,14 @@ The SHA-256 checksum of the key that I originally created on October 18, 2024 is
 $ sha256sum cosign.pub 
 55e391488bbbfe28209e09963edf38a612e306572b2dd72bbcc97402690ff000  cosign.pub
 ```
+
+## Fedora 43 RPM 6 GPG Workaround
+
+Fedora 43 includes RPM 6, which auto-imports subkeys. libdnf also tries to
+import subkeys, which can cause rpm-ostree layering to fail during image
+builds. As a temporary workaround, the Containerfile disables `gpgcheck` and
+`repo_gpgcheck` for third-party repos only during the `rpm-ostree override
+remove --install=...` step, then re-enables them afterward.
+
+Remove this workaround once rpm-ostree/libdnf in Fedora 43 no longer errors
+when importing subkeys.
