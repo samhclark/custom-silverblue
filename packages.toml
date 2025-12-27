@@ -1,0 +1,58 @@
+# DNF package groups to install. Keep empty if unused.
+groups = [
+  "core",
+  "standard",
+  "virtualization",
+]
+
+[packages]
+install = [
+  # Visual Studio Code needs to be on the host because it's an Electron app
+  "code",
+
+  # Installs containerd, moby-engine, and runc
+  "docker",
+
+  # Required for Homebrew
+  "gcc",
+  "gcc-c++",
+
+  # Lets me put the titlebar buttons on the left
+  "gnome-tweaks",
+
+  # Real upstream Google Chrome. Being in a Flatpak breaks its sandbox.
+  "google-chrome-stable",
+
+  # Needed to prompt for PIN for TPM-bound SSH keys
+  "openssh-askpass",
+
+  # Power saving settings manager
+  "powertop",
+
+  # You know it, you love it.
+  "tailscale",
+
+  # Support TPM-bound SSH keys
+  "tpm2-pkcs11",
+  "tpm2-pkcs11-tools",
+
+  # Preferred shell over Bash
+  "zsh",
+]
+
+exclude = [
+  # Don't want to manage rom-ostree software from a GUI in the OS
+  "gnome-software-rpm-ostree",
+
+  # Don't want the tour
+  "gnome-tour",
+
+  # Prefer the Firefox Flatpak. The one from the repos is old.
+  "firefox",
+  
+  # Must remove this when removing Firefox.
+  "firefox-langpacks",
+
+  # This OS won't be used as a VirtualBox guest
+  "virtualbox-guest-additions",
+]
