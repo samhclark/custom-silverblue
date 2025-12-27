@@ -12,17 +12,14 @@ RUN mkdir -p /var/opt \
 
 # Install the packages
 RUN --mount=type=bind,source=packages.toml,target=/packages.toml,z \
-    --mount=type=bind,source=dnfdef.py,target=/dnfdef.py,z <<EOF 
-set -xeuo pipefail
-python3 /dnfdef.py
-systemctl enable tailscaled 
+    --mount=type=bind,source=dnfdef.py,target=/dnfdef.py,z \
+    set -xeuo pipefail \
+    && python3 /dnfdef.py \
+    && systemctl enable tailscaled \
+    && dnf clean all \
+    && rm /var/{log,cache,lib}/* -rf
 
-# Remove leftover build artifacts from installing packages in the final built image.
-dnf clean all
-rm /var/{log,cache,lib}/* -rf
-
-bootc container lint
-EOF
+RUN ["bootc", "container", "lint"]
 
 # Define required labels for this bootc image to be recognized as such.
 LABEL containers.bootc 1
