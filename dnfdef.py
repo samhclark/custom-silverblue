@@ -1,4 +1,6 @@
 """
+Inspired by https://github.com/mogsor/dnfdef (GPL-3).
+
 DNF layering flow for the container build:
 
 1. Install configured groups (if any).
