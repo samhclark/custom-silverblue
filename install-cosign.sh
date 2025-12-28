@@ -6,8 +6,8 @@ runner_arch="$1"
 workdir="$2" # Should be $RUNNER_TEMP
 toolsdir="${HOME}/tools"
 
-tag="v2.4.3"
-commit="6a7abbf3ae7eb6949883a80c8f6007cc065d2dfb"
+tag="v2.5.3"
+commit="488ef8ceed5ab5d77379e9077a124a0d0df41d06"
 
 log_info() {
     1>&2 echo "[INFO]: $*"
