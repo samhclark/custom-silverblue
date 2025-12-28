@@ -2,6 +2,8 @@
 
 Following Jorge Castro's lead and making my own spin on Silverblue
 
+[![Build bootc image](https://github.com/samhclark/custom-silverblue/actions/workflows/build.yaml/badge.svg)](https://github.com/samhclark/custom-silverblue/actions/workflows/build.yaml)
+
 ## Rebasing onto this image
 
 This bootstrapping process helps get the public keys onto your machine 
@@ -10,7 +12,7 @@ and makes sure everything is configured right.
 From another Silverblue based image, first, rebase onto the _unverified_ image.
 
 ```
-rpm-ostree rebase ostree-unverified-registry:ghcr.io/samhclark/custom-silverblue:43
+sudo bootc switch ghcr.io/samhclark/custom-silverblue:43
 ```
 
 Optional: Manually verify that the image you just rebased onto is signed.
@@ -18,23 +20,21 @@ Optional: Manually verify that the image you just rebased onto is signed.
 ```
 $ wget -O - https://raw.githubusercontent.com/samhclark/custom-silverblue/refs/heads/main/overlay-root/usr/etc/pki/cosign/cosign.pub \
     | cosign verify --key /dev/stdin ghcr.io/samhclark/custom-silverblue@$( \
-        rpm-ostree status \
-        | head -n 7 \
-        | grep -o 'sha256:[a-f0-9]\{64\}' \
+        sudo bootc status --json | jq '.status.staged.image.iamgeDigest'
     )
 ```
 
 If the above command fails (returns with a non-zero exit code), then you should abort the rebase
 
 ```
-rpm-ostree cleanup --pending
+sudo bootc rollback
 ```
 
 Assuming it succeeded, then reboot: `systemctl reboot`.
 After that, rebase onto the signed image. 
 
 ```
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/samhclark/custom-silverblue:43
+sudo bootc switch --enforce-container-sigpolicy ghcr.io/samhclark/custom-silverblue:43
 ```
 
 ## Google Linux Signing Keys
@@ -74,13 +74,3 @@ $ sha256sum cosign.pub
 55e391488bbbfe28209e09963edf38a612e306572b2dd72bbcc97402690ff000  cosign.pub
 ```
 
-## Fedora 43 RPM 6 GPG Workaround
-
-Fedora 43 includes RPM 6, which auto-imports subkeys. libdnf also tries to
-import subkeys, which can cause rpm-ostree layering to fail during image
-builds. As a temporary workaround, the Containerfile disables `gpgcheck` and
-`repo_gpgcheck` for third-party repos only during the `rpm-ostree override
-remove --install=...` step, then re-enables them afterward.
-
-Remove this workaround once rpm-ostree/libdnf in Fedora 43 no longer errors
-when importing subkeys.
