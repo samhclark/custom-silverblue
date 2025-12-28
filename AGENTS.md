@@ -4,12 +4,13 @@ This file provides guidance to Codex CLI and other LLM agents when working in th
 
 ## Project Overview
 
-This repository builds a custom Fedora Silverblue (bootable container) image that is published to GitHub Container Registry. Package changes are applied via `rpm-ostree` during the container build; this is not a `dnf`-based workflow.
+This repository builds a custom Fedora Silverblue (bootable container) image that is published to GitHub Container Registry. Package changes are applied via `dnf` during the container build (bootc-based workflow).
 
 ## Key Files
 
 - `Containerfile`: Defines the Silverblue-based bootable container build.
-- `packages.json`: Source of truth for RPM additions/removals applied via `rpm-ostree`.
+- `packages.toml`: Source of truth for DNF package groups, installs, and removals.
+- `dnfdef.py`: Applies the package config from `packages.toml` during the build.
 - `overlay-root/`: Files copied into the image filesystem.
 - `install-cosign.sh`: Helper for installing cosign locally.
 - `log-in-to-registry.sh`: Helper for authenticating to GHCR.
@@ -19,19 +20,19 @@ This repository builds a custom Fedora Silverblue (bootable container) image tha
 
 - Use `podman` or `docker` to build. Example:
   `podman build -f Containerfile --build-arg silverblue_version=43 -t custom-silverblue .`
-- `rpm-ostree` is the package manager inside the build; avoid `dnf` unless explicitly required.
-- Package changes should be made by editing `packages.json`, not by modifying `Containerfile` directly.
-- Fedora 43 RPM 6 workaround: `Containerfile` temporarily disables `gpgcheck` and `repo_gpgcheck` for third-party repos during the rpm-ostree layering step and re-enables them afterward. Remove when no longer needed.
+- `dnf` is the package manager inside the build; avoid `rpm-ostree`.
+- Package changes should be made by editing `packages.toml` (and, if needed, `dnfdef.py`), not by modifying `Containerfile` directly.
+- `bootc container lint` runs during the build; keep the image bootc-compatible.
 
 ## Development Guidelines
 
 - Keep overlay changes in `overlay-root/` and ensure paths match the final filesystem layout.
-- When adjusting packages, preserve the intent comments in `packages.json`.
+- When adjusting packages, preserve the intent comments in `packages.toml`.
 - Avoid introducing Unicode in new files unless already present.
 
-## OSTree Primer (Tips)
+## bootc Primer (Tips)
 
-- Treat `/usr` as immutable at runtime; OSTree bind-mounts it read-only.
+- Treat `/usr` as immutable at runtime; bootc bind-mounts it read-only.
 - Only `/var` persists across upgrades; avoid relying on updates to existing `/var` files from new images.
 - Standard writable paths are symlinks into `/var` (e.g. `/home` -> `/var/home`, `/opt` -> `/var/opt`).
 - Use systemd `tmpfiles.d` or unit `StateDirectory=` to seed `/var` content on first boot.
