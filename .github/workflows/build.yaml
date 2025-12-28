@@ -1,4 +1,4 @@
-name: build-custom-silverblue
+name: Build bootc image
 on:
   pull_request:
   merge_group:
