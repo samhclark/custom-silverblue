@@ -41,6 +41,19 @@ jobs:
         shell: bash
         run: ./install-cosign.sh "${{ runner.arch }}" "$RUNNER_TEMP"
 
+      - name: Verify base image signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_tag="$(printf '%s\n' "${{ inputs.tags }}" | awk 'NF {print $1; exit}')"
+          if [[ -z "$base_tag" ]]; then
+            echo "No base image tag found in inputs.tags" >&2
+            exit 1
+          fi
+          base_image="quay.io/fedora-ostree-desktops/silverblue:${base_tag}"
+          echo "Verifying base image: ${base_image}"
+          cosign verify --key .github/keys/fedora-ostree-desktops.pub "${base_image}"
+
       - name: Build image
         id: build
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
