@@ -13,6 +13,9 @@ install = [
   # Installs containerd, moby-engine, and runc
   "docker",
 
+  # A tool for out-of-band, btrfs deduplication
+  "duperemove",
+  
   # Required for Homebrew
   "gcc",
   "gcc-c++",
