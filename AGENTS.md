@@ -12,7 +12,6 @@ This repository builds a custom Fedora Silverblue (bootable container) image tha
 - `packages.toml`: Source of truth for DNF package groups, installs, and removals.
 - `dnfdef.py`: Applies the package config from `packages.toml` during the build.
 - `overlay-root/`: Files copied into the image filesystem.
-- `install-cosign.sh`: Helper for installing cosign locally.
 - `log-in-to-registry.sh`: Helper for authenticating to GHCR.
 - `README.md`: Rebase and signing instructions for consumers.
 

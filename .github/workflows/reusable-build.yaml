@@ -1,6 +1,6 @@
 on:
   workflow_call:
-    inputs: 
+    inputs:
       containerfile_path:
         required: true
         type: string
@@ -21,7 +21,7 @@ on:
         required: true
       cosign_private_key:
         required: true
-      
+
 
 jobs:
   build-custom-silverblue:
@@ -37,22 +37,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Cosign
-        shell: bash
-        run: ./install-cosign.sh "${{ runner.arch }}" "$RUNNER_TEMP"
-
       - name: Verify base image signature
-        shell: bash
-        run: |
-          set -euo pipefail
-          base_tag="$(printf '%s\n' "${{ inputs.tags }}" | awk 'NF {print $1; exit}')"
-          if [[ -z "$base_tag" ]]; then
-            echo "No base image tag found in inputs.tags" >&2
-            exit 1
-          fi
-          base_image="quay.io/fedora-ostree-desktops/silverblue:${base_tag}"
-          echo "Verifying base image: ${base_image}"
-          cosign verify --key .github/keys/fedora-ostree-desktops.pub "${base_image}"
+        uses: samhclark/cosign-exec-action@v1.0.14
+        with:
+          args: >-
+            verify --key .github/keys/fedora-ostree-desktops.pub
+            quay.io/fedora-ostree-desktops/silverblue:{}
+          each: ${{ inputs.tags }}
 
       - name: Build image
         id: build
@@ -83,19 +74,20 @@ jobs:
           subject-name: ${{ inputs.registry }}/${{ inputs.namespace }}/${{ steps.build.outputs.image }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
-      
+
       - name: Sign the published OCI image
         if: ${{ github.event_name != 'pull_request' }}
+        uses: samhclark/cosign-exec-action@v1.0.14
         env:
-          digest: ${{ steps.push.outputs.digest }}
-          fully_qualified_image_names_json: ${{ steps.push.outputs.registry-paths }} 
           COSIGN_PASSWORD: ${{ secrets.cosign_password }}
           COSIGN_PRIVATE_KEY: ${{ secrets.cosign_private_key }}
-        run: >
-          echo "${fully_qualified_image_names_json}" 
-          | jq -r '.[]' 
-          | xargs -I {} cosign sign --new-bundle-format=false --use-signing-config=false  --yes --key=env://COSIGN_PRIVATE_KEY "{}@${digest}"
-      
+        with:
+          registry-token: ${{ secrets.GITHUB_TOKEN }}
+          args: >-
+            sign --yes --key=env://COSIGN_PRIVATE_KEY --new-bundle-format=false --use-signing-config=false
+            ${{ inputs.registry }}/${{ inputs.namespace }}/${{ inputs.image_name }}:{}@${{ steps.push.outputs.digest }}
+          each: ${{ inputs.tags }}
+
       - name: Echo outputs for auditing
         if: github.event_name != 'pull_request'
         run: |
