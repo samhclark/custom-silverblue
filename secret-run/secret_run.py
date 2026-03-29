@@ -14,8 +14,12 @@ import subprocess
 import sys
 import tomllib
 
-XDG_CONFIG_HOME = pathlib.Path(os.environ.get("XDG_CONFIG_HOME", pathlib.Path.home() / ".config"))
-XDG_DATA_HOME = pathlib.Path(os.environ.get("XDG_DATA_HOME", pathlib.Path.home() / ".local" / "share"))
+XDG_CONFIG_HOME = pathlib.Path(
+    os.environ.get("XDG_CONFIG_HOME", pathlib.Path.home() / ".config")
+)
+XDG_DATA_HOME = pathlib.Path(
+    os.environ.get("XDG_DATA_HOME", pathlib.Path.home() / ".local" / "share")
+)
 
 SEALED_CREDS_DIR = XDG_DATA_HOME / "sealed-creds"
 PROFILES_TOML = XDG_CONFIG_HOME / "secret-run" / "profiles.toml"
@@ -26,10 +30,7 @@ def cred_path(base: pathlib.Path, profile: str, name: str) -> pathlib.Path:
 
 
 def toml_snippet(profile: str, var: str, cred_filename: str) -> str:
-    return (
-        f"[profiles.{profile}.env]\n"
-        f'{var} = "{cred_filename}"'
-    )
+    return f'[profiles.{profile}.env]\n{var} = "{cred_filename}"'
 
 
 def build_encrypt_command(name: str, output_path: pathlib.Path) -> list[str]:
@@ -37,7 +38,8 @@ def build_encrypt_command(name: str, output_path: pathlib.Path) -> list[str]:
     # keyring, avoiding the PAM password prompt that --with-key=tpm2 alone
     # triggers on every encrypt/decrypt.
     return [
-        "systemd-creds", "encrypt",
+        "systemd-creds",
+        "encrypt",
         "--with-key=tpm2+host",
         "--user",
         f"--name={name}",
@@ -84,7 +86,8 @@ def cred_name_from_filename(filename: str) -> str:
 def build_decrypt_command(cred_file: pathlib.Path) -> list[str]:
     name = cred_name_from_filename(cred_file.name)
     return [
-        "systemd-creds", "decrypt",
+        "systemd-creds",
+        "decrypt",
         "--user",
         f"--name={name}",
         str(cred_file),
@@ -102,7 +105,10 @@ def load_profile(profile_name: str, toml_str: str) -> dict:
     config = tomllib.loads(toml_str)
     profiles = config.get("profiles", {})
     if profile_name not in profiles:
-        print(f"Error: profile '{profile_name}' not found in profiles.toml.", file=sys.stderr)
+        print(
+            f"Error: profile '{profile_name}' not found in profiles.toml.",
+            file=sys.stderr,
+        )
         sys.exit(1)
     profile = profiles[profile_name]
     return {
@@ -139,11 +145,13 @@ def run_profile(profile_name: str, cmd: list[str]) -> None:
 
 
 def build_credential_process_json(access_key_id: str, secret_access_key: str) -> str:
-    return json.dumps({
-        "Version": 1,
-        "AccessKeyId": access_key_id,
-        "SecretAccessKey": secret_access_key,
-    })
+    return json.dumps(
+        {
+            "Version": 1,
+            "AccessKeyId": access_key_id,
+            "SecretAccessKey": secret_access_key,
+        }
+    )
 
 
 def credential_process(profile_name: str) -> str:
@@ -152,10 +160,16 @@ def credential_process(profile_name: str) -> str:
     sealed_env = profile["env"]
 
     if "AWS_ACCESS_KEY_ID" not in sealed_env:
-        print(f"Error: profile '{profile_name}' missing AWS_ACCESS_KEY_ID in env.", file=sys.stderr)
+        print(
+            f"Error: profile '{profile_name}' missing AWS_ACCESS_KEY_ID in env.",
+            file=sys.stderr,
+        )
         sys.exit(1)
     if "AWS_SECRET_ACCESS_KEY" not in sealed_env:
-        print(f"Error: profile '{profile_name}' missing AWS_SECRET_ACCESS_KEY in env.", file=sys.stderr)
+        print(
+            f"Error: profile '{profile_name}' missing AWS_SECRET_ACCESS_KEY in env.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     key_id = decrypt_credential(SEALED_CREDS_DIR / sealed_env["AWS_ACCESS_KEY_ID"])
@@ -206,22 +220,46 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     seal_parser = subparsers.add_parser("seal", help="Seal a new secret to the TPM.")
-    seal_parser.add_argument("--profile", required=True, help="Profile name (e.g. aws-backup).")
-    seal_parser.add_argument("--var", required=True, help="Environment variable name (e.g. AWS_ACCESS_KEY_ID).")
-    seal_parser.add_argument("--name", required=True, help="Credential name used in the .cred filename (e.g. key-id).")
-    seal_parser.add_argument("--stdin", action="store_true", help="Read secret from stdin instead of prompting.")
+    seal_parser.add_argument(
+        "--profile", required=True, help="Profile name (e.g. aws-backup)."
+    )
+    seal_parser.add_argument(
+        "--var",
+        required=True,
+        help="Environment variable name (e.g. AWS_ACCESS_KEY_ID).",
+    )
+    seal_parser.add_argument(
+        "--name",
+        required=True,
+        help="Credential name used in the .cred filename (e.g. key-id).",
+    )
+    seal_parser.add_argument(
+        "--stdin",
+        action="store_true",
+        help="Read secret from stdin instead of prompting.",
+    )
 
     run_parser = subparsers.add_parser("run", help="Unseal secrets and run a command.")
-    run_parser.add_argument("--profile", required=True, help="Profile name to load from profiles.toml.")
-    run_parser.add_argument("cmd", nargs=argparse.REMAINDER, help="Command to run (after --).")
+    run_parser.add_argument(
+        "--profile", required=True, help="Profile name to load from profiles.toml."
+    )
+    run_parser.add_argument(
+        "cmd", nargs=argparse.REMAINDER, help="Command to run (after --)."
+    )
 
-    cp_parser = subparsers.add_parser("credential-process", help="Output AWS credential JSON.")
+    cp_parser = subparsers.add_parser(
+        "credential-process", help="Output AWS credential JSON."
+    )
     cp_parser.add_argument("profile", help="Profile name to load from profiles.toml.")
 
     subparsers.add_parser("list", help="List all profiles and their env var mappings.")
 
-    verify_parser = subparsers.add_parser("verify", help="Verify all sealed creds in a profile can be decrypted.")
-    verify_parser.add_argument("--profile", required=True, help="Profile name to verify.")
+    verify_parser = subparsers.add_parser(
+        "verify", help="Verify all sealed creds in a profile can be decrypted."
+    )
+    verify_parser.add_argument(
+        "--profile", required=True, help="Profile name to verify."
+    )
 
     return parser.parse_args(argv)
 
@@ -230,7 +268,9 @@ def main() -> None:
     args = parse_args()
 
     if args.command == "seal":
-        snippet = seal(profile=args.profile, var=args.var, name=args.name, from_stdin=args.stdin)
+        snippet = seal(
+            profile=args.profile, var=args.var, name=args.name, from_stdin=args.stdin
+        )
         print(f"\nSealed successfully. Add this to {PROFILES_TOML}:\n")
         print(snippet)
     elif args.command == "run":

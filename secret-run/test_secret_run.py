@@ -4,7 +4,6 @@
 # Run with: python -m unittest test_secret_run -v (no pytest)
 
 import json
-import os
 import pathlib
 import subprocess
 import unittest
@@ -36,7 +35,7 @@ class TestTomlSnippet(unittest.TestCase):
             var="AWS_ACCESS_KEY_ID",
             cred_filename="aws-backup.key-id.cred",
         )
-        self.assertIn('[profiles.aws-backup.env]', snippet)
+        self.assertIn("[profiles.aws-backup.env]", snippet)
 
     def test_snippet_contains_var_mapping(self):
         snippet = secret_run.toml_snippet(
@@ -51,16 +50,22 @@ class TestBuildEncryptCommand(unittest.TestCase):
     """The systemd-creds encrypt command is constructed correctly."""
 
     def test_command_structure(self):
-        out = pathlib.Path("/home/user/.local/share/sealed-creds/aws-backup.key-id.cred")
+        out = pathlib.Path(
+            "/home/user/.local/share/sealed-creds/aws-backup.key-id.cred"
+        )
         cmd = secret_run.build_encrypt_command(name="key-id", output_path=out)
-        self.assertEqual(cmd, [
-            "systemd-creds", "encrypt",
-            "--with-key=tpm2+host",
-            "--user",
-            "--name=key-id",
-            "-",
-            str(out),
-        ])
+        self.assertEqual(
+            cmd,
+            [
+                "systemd-creds",
+                "encrypt",
+                "--with-key=tpm2+host",
+                "--user",
+                "--name=key-id",
+                "-",
+                str(out),
+            ],
+        )
 
 
 class TestSeal(unittest.TestCase):
@@ -74,7 +79,7 @@ class TestSeal(unittest.TestCase):
 
         with mock.patch("secret_run.SEALED_CREDS_DIR", base):
             with mock.patch("pathlib.Path.mkdir"):
-                result = secret_run.seal(
+                secret_run.seal(
                     profile="aws-backup", var="AWS_ACCESS_KEY_ID", name="key-id"
                 )
 
@@ -117,9 +122,11 @@ class TestSealFromStdin(unittest.TestCase):
 
         with mock.patch("secret_run.SEALED_CREDS_DIR", base):
             with mock.patch("pathlib.Path.mkdir"):
-                result = secret_run.seal(
-                    profile="aws-backup", var="AWS_ACCESS_KEY_ID",
-                    name="key-id", from_stdin=True,
+                secret_run.seal(
+                    profile="aws-backup",
+                    var="AWS_ACCESS_KEY_ID",
+                    name="key-id",
+                    from_stdin=True,
                 )
 
         call_args = mock_run.call_args
@@ -135,8 +142,10 @@ class TestSealFromStdin(unittest.TestCase):
         with mock.patch("secret_run.SEALED_CREDS_DIR", base):
             with mock.patch("pathlib.Path.mkdir"):
                 secret_run.seal(
-                    profile="test", var="TOKEN",
-                    name="tok", from_stdin=True,
+                    profile="test",
+                    var="TOKEN",
+                    name="tok",
+                    from_stdin=True,
                 )
 
         call_args = mock_run.call_args
@@ -147,20 +156,35 @@ class TestParseArgs(unittest.TestCase):
     """Argument parsing for the seal subcommand."""
 
     def test_seal_args(self):
-        args = secret_run.parse_args([
-            "seal", "--profile", "aws-backup",
-            "--var", "AWS_ACCESS_KEY_ID", "--name", "key-id",
-        ])
+        args = secret_run.parse_args(
+            [
+                "seal",
+                "--profile",
+                "aws-backup",
+                "--var",
+                "AWS_ACCESS_KEY_ID",
+                "--name",
+                "key-id",
+            ]
+        )
         self.assertEqual(args.command, "seal")
         self.assertEqual(args.profile, "aws-backup")
         self.assertEqual(args.var, "AWS_ACCESS_KEY_ID")
         self.assertEqual(args.name, "key-id")
 
     def test_seal_stdin_flag(self):
-        args = secret_run.parse_args([
-            "seal", "--profile", "test", "--var", "TOKEN",
-            "--name", "tok", "--stdin",
-        ])
+        args = secret_run.parse_args(
+            [
+                "seal",
+                "--profile",
+                "test",
+                "--var",
+                "TOKEN",
+                "--name",
+                "tok",
+                "--stdin",
+            ]
+        )
         self.assertTrue(args.stdin)
 
 
@@ -168,10 +192,14 @@ class TestCredNameFromFilename(unittest.TestCase):
     """Credential name is extracted from the {profile}.{name}.cred convention."""
 
     def test_extracts_name(self):
-        self.assertEqual(secret_run.cred_name_from_filename("aws-backup.key-id.cred"), "key-id")
+        self.assertEqual(
+            secret_run.cred_name_from_filename("aws-backup.key-id.cred"), "key-id"
+        )
 
     def test_extracts_name_with_dots(self):
-        self.assertEqual(secret_run.cred_name_from_filename("myprofile.api.token.cred"), "api.token")
+        self.assertEqual(
+            secret_run.cred_name_from_filename("myprofile.api.token.cred"), "api.token"
+        )
 
     def test_no_profile_prefix(self):
         self.assertEqual(secret_run.cred_name_from_filename("token.cred"), "token")
@@ -181,15 +209,21 @@ class TestBuildDecryptCommand(unittest.TestCase):
     """The systemd-creds decrypt command is constructed correctly."""
 
     def test_command_structure(self):
-        cred = pathlib.Path("/home/user/.local/share/sealed-creds/aws-backup.key-id.cred")
+        cred = pathlib.Path(
+            "/home/user/.local/share/sealed-creds/aws-backup.key-id.cred"
+        )
         cmd = secret_run.build_decrypt_command(cred)
-        self.assertEqual(cmd, [
-            "systemd-creds", "decrypt",
-            "--user",
-            "--name=key-id",
-            str(cred),
-            "-",
-        ])
+        self.assertEqual(
+            cmd,
+            [
+                "systemd-creds",
+                "decrypt",
+                "--user",
+                "--name=key-id",
+                str(cred),
+                "-",
+            ],
+        )
 
 
 SAMPLE_PROFILES_TOML = """\
@@ -212,7 +246,9 @@ class TestLoadProfile(unittest.TestCase):
     def test_load_env_mappings(self):
         profile = secret_run.load_profile("aws-backup", SAMPLE_PROFILES_TOML)
         self.assertEqual(profile["env"]["AWS_ACCESS_KEY_ID"], "aws-backup.key-id.cred")
-        self.assertEqual(profile["env"]["AWS_SECRET_ACCESS_KEY"], "aws-backup.secret.cred")
+        self.assertEqual(
+            profile["env"]["AWS_SECRET_ACCESS_KEY"], "aws-backup.secret.cred"
+        )
 
     def test_load_env_literal_mappings(self):
         profile = secret_run.load_profile("aws-backup", SAMPLE_PROFILES_TOML)
@@ -243,7 +279,9 @@ class TestDecryptCredential(unittest.TestCase):
         mock_run.return_value = subprocess.CompletedProcess(
             args=[], returncode=0, stdout=b"AKIAIOSFODNN7EXAMPLE"
         )
-        cred = pathlib.Path("/home/user/.local/share/sealed-creds/aws-backup.key-id.cred")
+        cred = pathlib.Path(
+            "/home/user/.local/share/sealed-creds/aws-backup.key-id.cred"
+        )
         result = secret_run.decrypt_credential(cred)
         self.assertEqual(result, "AKIAIOSFODNN7EXAMPLE")
 
@@ -264,18 +302,32 @@ class TestRunParseArgs(unittest.TestCase):
     """Argument parsing for the run subcommand."""
 
     def test_run_args(self):
-        args = secret_run.parse_args([
-            "run", "--profile", "aws-backup", "--", "aws", "s3", "ls",
-        ])
+        args = secret_run.parse_args(
+            [
+                "run",
+                "--profile",
+                "aws-backup",
+                "--",
+                "aws",
+                "s3",
+                "ls",
+            ]
+        )
         self.assertEqual(args.command, "run")
         self.assertEqual(args.profile, "aws-backup")
         # REMAINDER includes the -- separator; main() strips it before use
         self.assertEqual(args.cmd, ["--", "aws", "s3", "ls"])
 
     def test_run_args_single_command(self):
-        args = secret_run.parse_args([
-            "run", "--profile", "aws-backup", "--", "bash",
-        ])
+        args = secret_run.parse_args(
+            [
+                "run",
+                "--profile",
+                "aws-backup",
+                "--",
+                "bash",
+            ]
+        )
         self.assertEqual(args.cmd, ["--", "bash"])
 
 
@@ -292,8 +344,10 @@ class TestBuildRunEnv(unittest.TestCase):
         base = pathlib.Path("/home/user/.local/share/sealed-creds")
         env = secret_run.build_run_env(
             base_env={"HOME": "/home/user", "PATH": "/usr/bin"},
-            sealed_env={"AWS_ACCESS_KEY_ID": "aws-backup.key-id.cred",
-                        "AWS_SECRET_ACCESS_KEY": "aws-backup.secret.cred"},
+            sealed_env={
+                "AWS_ACCESS_KEY_ID": "aws-backup.key-id.cred",
+                "AWS_SECRET_ACCESS_KEY": "aws-backup.secret.cred",
+            },
             literal_env={"AWS_DEFAULT_REGION": "garage"},
             creds_dir=base,
         )
@@ -332,7 +386,9 @@ class TestBuildCredentialProcessJson(unittest.TestCase):
             secret_access_key="SECRETEXAMPLE",
         )
         parsed = json.loads(result)
-        self.assertEqual(set(parsed.keys()), {"Version", "AccessKeyId", "SecretAccessKey"})
+        self.assertEqual(
+            set(parsed.keys()), {"Version", "AccessKeyId", "SecretAccessKey"}
+        )
 
     def test_output_is_valid_json(self):
         result = secret_run.build_credential_process_json(
@@ -476,7 +532,13 @@ class TestVerifyProfile(unittest.TestCase):
         results = secret_run.verify_profile("aws-backup", SAMPLE_PROFILES_TOML, base)
 
         self.assertTrue(all(not r["ok"] for r in results))
-        self.assertTrue(any("not found" in r["error"].lower() or "no such file" in r["error"].lower() for r in results))
+        self.assertTrue(
+            any(
+                "not found" in r["error"].lower()
+                or "no such file" in r["error"].lower()
+                for r in results
+            )
+        )
 
     @mock.patch("secret_run.decrypt_credential")
     def test_result_includes_var_name(self, mock_decrypt):
