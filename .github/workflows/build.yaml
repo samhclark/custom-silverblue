@@ -19,13 +19,13 @@ jobs:
         run: pipx install uv
 
       - name: Run ruff check
-        run: uvx ruff check secret-run/
+        run: uvx ruff check .
 
       - name: Run ruff format check
-        run: uvx ruff format --check secret-run/
+        run: uvx ruff format --check .
 
       - name: Run ty check
-        run: uvx ty check secret-run/
+        run: uvx ty check .
 
       - name: Run tests
         working-directory: secret-run

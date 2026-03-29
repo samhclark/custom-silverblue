@@ -14,7 +14,6 @@ Notes:
 - The config file is packages.toml.
 """
 
-
 # Setup
 import pathlib
 import subprocess
