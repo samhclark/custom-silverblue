@@ -7,6 +7,30 @@ on:
   workflow_dispatch:
 
 jobs:
+  lint:
+    name: Lint and test Python
+    runs-on: ubuntu-24.04
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install uv
+        run: pipx install uv
+
+      - name: Run ruff check
+        run: uvx ruff check secret-run/
+
+      - name: Run ruff format check
+        run: uvx ruff format --check secret-run/
+
+      - name: Run ty check
+        run: uvx ty check secret-run/
+
+      - name: Run tests
+        working-directory: secret-run
+        run: python -m unittest test_secret_run -v
+
   build-custom-silverblue:
     uses: ./.github/workflows/reusable-build.yaml
     permissions:
