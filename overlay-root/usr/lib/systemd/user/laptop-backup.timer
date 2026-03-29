@@ -1,0 +1,10 @@
+[Unit]
+Description=Hourly backup to local restic repo and Garage S3
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=5m
+
+[Install]
+WantedBy=timers.target

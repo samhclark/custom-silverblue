@@ -1,0 +1,6 @@
+[Unit]
+Description=Backup Documents and Pictures to local restic repo, then sync to Garage S3
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/laptop-backup
