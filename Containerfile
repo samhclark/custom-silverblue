@@ -2,8 +2,8 @@ ARG silverblue_version=43
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
 COPY overlay-root/ /
-COPY secret-run/secret_run.py /usr/local/bin/secret-run
-COPY secret-run/laptop-backup.sh /usr/local/bin/laptop-backup
+COPY secret-run/secret_run.py /usr/bin/secret-run
+COPY secret-run/laptop-backup.sh /usr/bin/laptop-backup
 
 # Config for install Google Chrome
 RUN mkdir -p /var/opt \

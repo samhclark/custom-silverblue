@@ -5,7 +5,7 @@
 
 set -euo pipefail
 
-SECRET_RUN="/usr/local/bin/secret-run"
+SECRET_RUN="/usr/bin/secret-run"
 RESTIC="/home/linuxbrew/.linuxbrew/bin/restic"
 AWS="/home/linuxbrew/.linuxbrew/bin/aws"
 

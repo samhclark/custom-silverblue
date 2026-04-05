@@ -3,4 +3,4 @@ Description=Backup Documents and Pictures to local restic repo, then sync to Gar
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/laptop-backup
+ExecStart=/usr/bin/laptop-backup
