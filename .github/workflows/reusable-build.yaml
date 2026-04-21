@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Verify base image signature
-        uses: samhclark/cosign-exec-action@v1.0.15
+        uses: samhclark/cosign-exec-action@v1.0.16
         with:
           args: >-
             verify --key .github/keys/fedora-ostree-desktops.pub
@@ -78,7 +78,7 @@ jobs:
 
       - name: Sign the published OCI image
         if: ${{ github.event_name != 'pull_request' }}
-        uses: samhclark/cosign-exec-action@v1.0.15
+        uses: samhclark/cosign-exec-action@v1.0.16
         env:
           COSIGN_PASSWORD: ${{ secrets.cosign_password }}
           COSIGN_PRIVATE_KEY: ${{ secrets.cosign_private_key }}
