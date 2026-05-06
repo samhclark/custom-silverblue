@@ -18,7 +18,7 @@ This repository builds a custom Fedora Silverblue (bootable container) image tha
 ## Build & Publish Notes
 
 - Use `podman` or `docker` to build. Example:
-  `podman build -f Containerfile --build-arg silverblue_version=43 -t custom-silverblue .`
+  `podman build -f Containerfile --build-arg silverblue_version=44 -t custom-silverblue .`
 - `dnf` is the package manager inside the build; avoid `rpm-ostree`.
 - Package changes should be made by editing `packages.toml` (and, if needed, `dnfdef.py`), not by modifying `Containerfile` directly.
 - `bootc container lint` runs during the build; keep the image bootc-compatible.

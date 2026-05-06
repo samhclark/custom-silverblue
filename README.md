@@ -12,7 +12,7 @@ and makes sure everything is configured right.
 From another Silverblue based image, first, rebase onto the _unverified_ image.
 
 ```
-sudo bootc switch ghcr.io/samhclark/custom-silverblue:43
+sudo bootc switch ghcr.io/samhclark/custom-silverblue:44
 ```
 
 Optional: Manually verify that the image you just rebased onto is signed.
@@ -34,7 +34,7 @@ Assuming it succeeded, then reboot: `systemctl reboot`.
 After that, rebase onto the signed image. 
 
 ```
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/samhclark/custom-silverblue:43
+sudo bootc switch --enforce-container-sigpolicy ghcr.io/samhclark/custom-silverblue:44
 ```
 
 ## Google Linux Signing Keys
