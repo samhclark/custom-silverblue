@@ -1,4 +1,4 @@
-ARG silverblue_version=43
+ARG silverblue_version=44
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
 COPY overlay-root/ /
