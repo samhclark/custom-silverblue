@@ -18,18 +18,11 @@ jobs:
       - name: Install uv
         run: pipx install uv
 
-      - name: Run ruff check
-        run: uvx ruff check .
+      - name: Check
+        run: make check
 
-      - name: Run ruff format check
-        run: uvx ruff format --check .
-
-      - name: Run ty check
-        run: uvx ty check .
-
-      - name: Run tests
-        working-directory: secret-run
-        run: python -m unittest test_secret_run -v
+      - name: Test
+        run: make test
 
   build-custom-silverblue:
     uses: ./.github/workflows/reusable-build.yaml
