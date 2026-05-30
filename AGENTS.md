@@ -17,8 +17,7 @@ This repository builds a custom Fedora Silverblue (bootable container) image tha
 
 ## Build & Publish Notes
 
-- Use `podman` or `docker` to build. Example:
-  `podman build -f Containerfile --build-arg silverblue_version=44 -t custom-silverblue .`
+- Use `make build` to build the container image locally, or `make` to run the full pipeline (deps, check, test, build).
 - `dnf` is the package manager inside the build; avoid `rpm-ostree`.
 - Package changes should be made by editing `packages.toml` (and, if needed, `dnfdef.py`), not by modifying `Containerfile` directly.
 - `bootc container lint` runs during the build; keep the image bootc-compatible.
@@ -39,4 +38,6 @@ This repository builds a custom Fedora Silverblue (bootable container) image tha
 
 ## Testing & Verification
 
-- There are no automated tests. Verify by building the container and, if needed, rebasing onto it in a Silverblue environment per `README.md`.
+- Run `make test` to execute the unit tests for `secret-run/`.
+- Run `make check` to run ruff (format + lint) and ty type checks across all Python files.
+- For full verification, build the container with `make build` and, if needed, rebase onto it in a Silverblue environment per `README.md`.

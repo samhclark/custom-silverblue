@@ -44,7 +44,7 @@ They add new subkeys every year or so and start signing with that.
 When things start breaking eventually, get the new key with:
 
 ```
-wget -O overlay-root/etc/pki/rpm-gpg/google-linux-public-key.asc https://dl.google.com/linux/linux_signing_key.pub
+make update-keys
 ```
 
 ## Cosign Signing Keys
