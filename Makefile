@@ -53,12 +53,13 @@ check-ruff-format: ## Check code formatting with ruff
 
 .PHONY: check-ruff-lint
 check-ruff-lint: ## Run ruff linter
-	$(RUFF) check . || \
+	$(RUFF) check $(RUFF_CHECK_OPTS) . || \
 		(printf "$(COLOR_RED)Run 'make format' to fix some issues, then 'make check' again.$(COLOR_RESET)\n" && false)
 
+RUFF_CHECK_OPTS ?=
 .PHONY: check-ruff-fix
 check-ruff-fix: ## Run ruff linter with automatic fixes
-	$(MAKE) check-ruff-lint RUFF_ARGS=--fix
+	$(MAKE) check-ruff-lint RUFF_CHECK_OPTS=--fix
 
 .PHONY: check-ty
 check-ty: ## Run ty type checker
