@@ -103,6 +103,18 @@ deps-check-podman: ## Check that podman is available
 		(printf "$(COLOR_RED)$(PODMAN) not found. Install it via your system package manager.$(COLOR_RESET)\n" && false)
 	@printf "$(COLOR_BLUE)podman: $$($(PODMAN) --version)$(COLOR_RESET)\n"
 
+##@ Updates
+
+GOOGLE_SIGNING_KEY_URL ?= https://dl.google.com/linux/linux_signing_key.pub
+
+.PHONY: update-keys
+update-keys: update-key-google ## Update vendor GPG keys from upstream sources
+
+.PHONY: update-key-google
+update-key-google: ## Fetch the latest Google Linux signing key
+	curl -fsSL $(GOOGLE_SIGNING_KEY_URL) -o overlay-root/etc/pki/rpm-gpg/google-linux-public-key.asc
+	@printf "$(COLOR_GREEN)Google signing key updated$(COLOR_RESET)\n"
+
 ##@ Cleanup
 
 .PHONY: clean
