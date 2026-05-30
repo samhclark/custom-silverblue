@@ -51,7 +51,7 @@ on demand. No `~/.aws/credentials` file needed.
 
 ```ini
 [profile nas-backup]
-credential_process = /home/user/.local/bin/secret-run credential-process nas-backup
+credential_process = /usr/bin/secret-run credential-process nas-backup
 endpoint_url = https://nas.tailnet-name.ts.net:3900
 region = garage
 ```

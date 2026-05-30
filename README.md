@@ -18,9 +18,9 @@ sudo bootc switch ghcr.io/samhclark/custom-silverblue:44
 Optional: Manually verify that the image you just rebased onto is signed.
 
 ```
-$ wget -O - https://raw.githubusercontent.com/samhclark/custom-silverblue/refs/heads/main/overlay-root/usr/etc/pki/cosign/cosign.pub \
+$ wget -O - https://raw.githubusercontent.com/samhclark/custom-silverblue/refs/heads/main/overlay-root/etc/pki/cosign/cosign.pub \
     | cosign verify --key /dev/stdin ghcr.io/samhclark/custom-silverblue@$( \
-        sudo bootc status --json | jq '.status.staged.image.iamgeDigest'
+        sudo bootc status --json | jq -r '.status.staged.image.imageDigest'
     )
 ```
 
@@ -64,7 +64,7 @@ The key is included in the image at `/etc/pki/cosign/cosign.pub`.
 You can also download the key with:
 
 ```
-wget https://raw.githubusercontent.com/samhclark/custom-silverblue/refs/heads/main/cosign.pub
+wget https://raw.githubusercontent.com/samhclark/custom-silverblue/refs/heads/main/overlay-root/etc/pki/cosign/cosign.pub
 ```
 
 The SHA-256 checksum of the key that I originally created on October 18, 2024 is
@@ -73,4 +73,3 @@ The SHA-256 checksum of the key that I originally created on October 18, 2024 is
 $ sha256sum cosign.pub 
 55e391488bbbfe28209e09963edf38a612e306572b2dd72bbcc97402690ff000  cosign.pub
 ```
-
