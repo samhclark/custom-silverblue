@@ -31,8 +31,6 @@ jobs:
     name: Build
     if: ${{ ! inputs.publish }}
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
 
     steps:
       - name: Checkout
@@ -60,11 +58,6 @@ jobs:
     if: ${{ inputs.publish }}
     runs-on: ubuntu-24.04
     environment: release
-    permissions:
-      attestations: write
-      contents: read
-      id-token: write
-      packages: write
 
     steps:
       - name: Checkout
