@@ -2,6 +2,7 @@
 name=google-chrome
 baseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64
 enabled=1
+includepkgs=google-chrome-stable
 gpgcheck=1
 repo_gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/google-linux-public-key.asc

@@ -2,6 +2,7 @@
 name=Tailscale stable
 baseurl=https://pkgs.tailscale.com/stable/fedora/$basearch
 enabled=1
+includepkgs=tailscale
 type=rpm
 repo_gpgcheck=0
 gpgcheck=1
