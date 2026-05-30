@@ -6,6 +6,9 @@ on:
     - cron: '48 3 * * *'  # 3am-ish UTC everyday 
   workflow_dispatch:
 
+env:
+  UV_VERSION: "0.11.17"
+
 jobs:
   lint:
     name: Lint and test Python
@@ -16,7 +19,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install uv
-        run: pipx install uv
+        run: pipx install "uv==${UV_VERSION}"
 
       - name: Check
         run: make check
@@ -25,6 +28,23 @@ jobs:
         run: make test
 
   build-custom-silverblue:
+    name: Build image
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.ref != 'refs/heads/main' }}
+    uses: ./.github/workflows/reusable-build.yaml
+    permissions:
+      contents: read
+    with:
+      containerfile_path: ./Containerfile
+      registry: ghcr.io
+      namespace: samhclark
+      image_name: custom-silverblue
+      tags: |
+        44
+      publish: false
+
+  publish-custom-silverblue:
+    name: Build, sign, and publish image
+    if: ${{ github.event_name != 'pull_request' && github.event_name != 'merge_group' && github.ref == 'refs/heads/main' }}
     uses: ./.github/workflows/reusable-build.yaml
     permissions:
       attestations: write
@@ -38,6 +58,7 @@ jobs:
       image_name: custom-silverblue
       tags: |
         44
+      publish: true
     secrets:
       cosign_password: ${{ secrets.COSIGN_PASSWORD }}
       cosign_private_key: ${{ secrets.COSIGN_PRIVATE_KEY }}

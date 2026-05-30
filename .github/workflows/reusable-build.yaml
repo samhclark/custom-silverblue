@@ -16,17 +16,50 @@ on:
       tags:
         required: true
         type: string
+      publish:
+        required: true
+        type: boolean
     secrets:
       cosign_password:
-        required: true
+        required: false
       cosign_private_key:
-        required: true
+        required: false
 
 
 jobs:
   build-custom-silverblue:
-    name: Build, sign, then push
+    name: Build
+    if: ${{ ! inputs.publish }}
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Verify base image signature
+        uses: samhclark/cosign-exec-action@3d636c269e98ac0b9d5812324e8d1e86ca108e02 # v1.0.16
+        with:
+          args: >-
+            verify --key .github/keys/fedora-ostree-desktops.pub
+            quay.io/fedora-ostree-desktops/silverblue:{}
+          each: ${{ inputs.tags }}
+
+      - name: Build image
+        id: build
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
+        with:
+          containerfiles: |
+            ${{ inputs.containerfile_path }}
+          image: ${{ inputs.image_name }}
+          tags: ${{ inputs.tags }}
+
+  build-sign-push-custom-silverblue:
+    name: Build, sign, then push
+    if: ${{ inputs.publish }}
+    runs-on: ubuntu-24.04
+    environment: release
     permissions:
       attestations: write
       contents: read
@@ -38,7 +71,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Verify base image signature
-        uses: samhclark/cosign-exec-action@v1.0.16
+        uses: samhclark/cosign-exec-action@3d636c269e98ac0b9d5812324e8d1e86ca108e02 # v1.0.16
         with:
           args: >-
             verify --key .github/keys/fedora-ostree-desktops.pub
@@ -56,12 +89,13 @@ jobs:
 
       - name: Log in to Container Registry
         shell: bash
-        run: ./log-in-to-registry.sh "${{ github.actor }}" "${{ secrets.GITHUB_TOKEN }}" "${{ inputs.registry }}/${{ inputs.namespace }}"
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "${REGISTRY_TOKEN}" | ./log-in-to-registry.sh "${{ github.actor }}" "${{ inputs.registry }}/${{ inputs.namespace }}"
 
       - name: Push to Container Registry
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
         id: push
-        if: ${{ github.event_name != 'pull_request' }}
         with:
           image: ${{ steps.build.outputs.image }}
           tags: ${{ steps.build.outputs.tags }}
@@ -69,7 +103,6 @@ jobs:
 
       - name: Generate artifact attestation
         uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
-        if: ${{ github.event_name != 'pull_request' }}
         with:
           subject-name: ${{ inputs.registry }}/${{ inputs.namespace }}/${{ steps.build.outputs.image }}
           subject-digest: ${{ steps.push.outputs.digest }}
@@ -77,8 +110,7 @@ jobs:
           create-storage-record: false
 
       - name: Sign the published OCI image
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: samhclark/cosign-exec-action@v1.0.16
+        uses: samhclark/cosign-exec-action@3d636c269e98ac0b9d5812324e8d1e86ca108e02 # v1.0.16
         env:
           COSIGN_PASSWORD: ${{ secrets.cosign_password }}
           COSIGN_PRIVATE_KEY: ${{ secrets.cosign_private_key }}
@@ -90,6 +122,5 @@ jobs:
           each: ${{ inputs.tags }}
 
       - name: Echo outputs for auditing
-        if: github.event_name != 'pull_request'
         run: |
           echo "${{ toJSON(steps.push.outputs) }}"
