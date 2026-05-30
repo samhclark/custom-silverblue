@@ -20,7 +20,7 @@ env:
 
 jobs:
   cleanup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       packages: write
       contents: read
@@ -44,11 +44,11 @@ jobs:
 
           # Get all package versions for custom-silverblue
           echo "🔍 Querying all package versions..."
-          versions_json=$(gh api "/user/packages/container/${{ env.PACKAGE_NAME }}/versions" --paginate)
+          versions_json=$(gh api "/user/packages/container/${{ env.PACKAGE_NAME }}/versions" --paginate --slurp | jq -c '[.[][]]')
 
           if [[ -z "$versions_json" || "$versions_json" == "[]" ]]; then
             echo "📦 No container images found"
-            echo "delete_versions=" >> $GITHUB_OUTPUT
+            echo "delete_versions=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -67,7 +67,7 @@ jobs:
             echo "📊 Summary:"
             echo "  - Total versions: $total_versions"
             echo "  - Versions to delete: 0"
-            echo "delete_versions=" >> $GITHUB_OUTPUT
+            echo "delete_versions=" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -85,7 +85,7 @@ jobs:
           echo "  - Versions to keep: $remaining_count"
 
           # Set output for deletion step
-          echo "delete_versions=$delete_ids" >> $GITHUB_OUTPUT
+          echo "delete_versions=$delete_ids" >> "$GITHUB_OUTPUT"
 
           if [[ "${{ inputs.dry_run }}" == "true" ]]; then
             echo ""
@@ -96,7 +96,7 @@ jobs:
           fi
 
       - name: Delete old package versions
-        uses: actions/delete-package-versions@v5
+        uses: actions/delete-package-versions@25ad4af5be03aef10e0b3376b248688b7a44c40b # v5
         if: steps.versions.outputs.delete_versions != '' && inputs.dry_run != 'true'
         with:
           package-name: ${{ env.PACKAGE_NAME }}

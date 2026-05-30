@@ -16,8 +16,11 @@ PYTHON ?= python3
 UVX    ?= uvx
 PODMAN ?= podman
 
-RUFF ?= $(UVX) ruff
-TY   ?= $(UVX) ty
+RUFF_VERSION ?= 0.15.15
+TY_VERSION   ?= 0.0.40
+
+RUFF ?= $(UVX) ruff==$(RUFF_VERSION)
+TY   ?= $(UVX) ty==$(TY_VERSION)
 
 ## Colors
 COLOR_BLUE  = \033[34m
