@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Verify base image signature
-        uses: samhclark/cosign-exec-action@3d636c269e98ac0b9d5812324e8d1e86ca108e02 # v1.0.16
+        uses: samhclark/cosign-exec-action@f8a4f58b424b15fa5fee1795fd25e6de48f9609d # v1.1.0
         with:
           args: >-
             verify --key .github/keys/fedora-ostree-desktops.pub
@@ -64,7 +64,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Verify base image signature
-        uses: samhclark/cosign-exec-action@3d636c269e98ac0b9d5812324e8d1e86ca108e02 # v1.0.16
+        uses: samhclark/cosign-exec-action@f8a4f58b424b15fa5fee1795fd25e6de48f9609d # v1.1.0
         with:
           args: >-
             verify --key .github/keys/fedora-ostree-desktops.pub
@@ -103,7 +103,7 @@ jobs:
           create-storage-record: false
 
       - name: Sign the published OCI image
-        uses: samhclark/cosign-exec-action@3d636c269e98ac0b9d5812324e8d1e86ca108e02 # v1.0.16
+        uses: samhclark/cosign-exec-action@f8a4f58b424b15fa5fee1795fd25e6de48f9609d # v1.1.0
         env:
           COSIGN_PASSWORD: ${{ secrets.cosign_password }}
           COSIGN_PRIVATE_KEY: ${{ secrets.cosign_private_key }}
