@@ -26,6 +26,8 @@ install = [
   # Real upstream Google Chrome. Being in a Flatpak breaks its sandbox.
   "google-chrome-stable",
 
+  "mullvad-vpn",
+
   # Needed to prompt for PIN for TPM-bound SSH keys
   "openssh-askpass",
 
