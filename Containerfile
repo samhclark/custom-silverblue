@@ -18,6 +18,8 @@ RUN --mount=type=bind,source=packages.toml,target=/packages.toml,z \
     set -xeuo pipefail \
     && python3 /dnfdef.py \
     && systemctl enable tailscaled \
+    && systemctl enable mullvad-early-boot-blocking \
+    && systemctl enable mullvad-daemon \
     && dnf clean all \
     && rm /var/{log,cache,lib}/* -rf
 
