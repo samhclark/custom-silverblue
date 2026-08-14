@@ -36,6 +36,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Use VFS storage for Buildah
+        run: ./scripts/configure-ci-container-storage.sh
+
       - name: Verify base image signature
         uses: samhclark/cosign-exec-action@f8a4f58b424b15fa5fee1795fd25e6de48f9609d # v1.1.0
         with:
@@ -62,6 +65,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Use VFS storage for Buildah
+        run: ./scripts/configure-ci-container-storage.sh
 
       - name: Verify base image signature
         uses: samhclark/cosign-exec-action@f8a4f58b424b15fa5fee1795fd25e6de48f9609d # v1.1.0

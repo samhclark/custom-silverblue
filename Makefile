@@ -75,6 +75,7 @@ format: ## Auto-format code with ruff (makes changes in place)
 .PHONY: test
 test: ## Run unit tests
 	cd secret-run && $(PYTHON) -m unittest test_secret_run -v
+	$(PYTHON) -m unittest discover -s tests -v
 	@printf "$(COLOR_GREEN)test succeeded$(COLOR_RESET)\n"
 
 ##@ Building and Publishing

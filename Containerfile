@@ -13,9 +13,14 @@ RUN mkdir -p /var/opt \
     && echo 'L /var/opt/google - - - - /usr/lib/opt/google' >> /usr/lib/tmpfiles.d/google-chrome.conf
 
 # Install the packages
+# Copy up the SELinux policy store before package scriptlets modify it. Keeping
+# the policy transaction in this layer avoids cross-layer rename failures.
 RUN --mount=type=bind,source=packages.toml,target=/packages.toml,z \
     --mount=type=bind,source=dnfdef.py,target=/dnfdef.py,z \
     set -xeuo pipefail \
+    && cp -a /etc/selinux/targeted /etc/selinux/targeted.rebuilt \
+    && rm -rf /etc/selinux/targeted \
+    && mv /etc/selinux/targeted.rebuilt /etc/selinux/targeted \
     && python3 /dnfdef.py \
     && systemctl enable tailscaled \
     && systemctl enable mullvad-early-boot-blocking \
