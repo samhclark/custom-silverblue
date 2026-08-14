@@ -67,6 +67,23 @@ class BuildContractTests(unittest.TestCase):
             self.assertIn('graphroot = "/var/lib/containers/storage"', configured)
             self.assertIn('mount_program = "/usr/local/bin/fuse-overlayfs"', configured)
 
+    def test_storage_configurator_creates_vfs_config_when_system_config_is_missing(
+        self,
+    ):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp = Path(temp_dir)
+            source = temp / "missing-storage.conf"
+            destination = temp / "user" / "storage.conf"
+
+            subprocess.run(
+                [STORAGE_SCRIPT, source, destination],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(destination.read_text(), '[storage]\ndriver = "vfs"\n')
+
 
 if __name__ == "__main__":
     unittest.main()
