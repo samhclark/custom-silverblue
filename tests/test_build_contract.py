@@ -82,7 +82,11 @@ class BuildContractTests(unittest.TestCase):
                 text=True,
             )
 
-            self.assertEqual(destination.read_text(), '[storage]\ndriver = "vfs"\n')
+            configured = destination.read_text()
+            self.assertIn("[storage]\n", configured)
+            self.assertIn('driver = "vfs"', configured)
+            self.assertIn(f'runroot = "{destination.parent}/runroot"', configured)
+            self.assertIn(f'graphroot = "{destination.parent}/storage"', configured)
 
 
 if __name__ == "__main__":

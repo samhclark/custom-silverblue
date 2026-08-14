@@ -4,11 +4,15 @@ set -euo pipefail
 system_config="${1:-/etc/containers/storage.conf}"
 config_home="${XDG_CONFIG_HOME:-${HOME}/.config}"
 user_config="${2:-${config_home}/containers/storage.conf}"
+container_storage_dir="$(dirname "${user_config}")"
+runroot="${container_storage_dir}/runroot"
+graphroot="${container_storage_dir}/storage"
 
-mkdir -p "$(dirname "${user_config}")"
+mkdir -p "${container_storage_dir}"
 
 if [[ ! -e "${system_config}" ]]; then
-    printf '[storage]\ndriver = "vfs"\n' > "${user_config}"
+    printf '[storage]\ndriver = "vfs"\nrunroot = "%s"\ngraphroot = "%s"\n' \
+        "${runroot}" "${graphroot}" > "${user_config}"
 elif [[ ! -r "${system_config}" ]]; then
     printf 'container storage config is not readable: %s\n' "${system_config}" >&2
     exit 1
