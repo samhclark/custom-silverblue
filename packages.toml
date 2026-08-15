@@ -7,6 +7,9 @@ groups = [
 
 [packages]
 install = [
+  # bootc virtualization kit
+  "bcvk",
+
   # Visual Studio Code needs to be on the host because it's an Electron app
   "code",
 
