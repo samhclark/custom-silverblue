@@ -10,6 +10,8 @@ install = [
   # Visual Studio Code needs to be on the host because it's an Electron app
   "code",
 
+  "crun-krun",
+
   # Installs containerd, moby-engine, and runc
   "docker",
 
@@ -25,6 +27,8 @@ install = [
 
   # Real upstream Google Chrome. Being in a Flatpak breaks its sandbox.
   "google-chrome-stable",
+
+  "libkrun",
 
   "mullvad-vpn",
 
