@@ -51,7 +51,7 @@ jobs:
         id: build
         uses: redhat-actions/buildah-build@3a51aade9afa17e5c78256bcbe2e1ee08c7b995b # v3.0.2
         with:
-          buildah-image: quay.io/containers/buildah:v1.43.1:@sha256:f48d0f1b10486488f711f9a63da12e8f228b320ce0aeb0f66bbea68fd2f9900b
+          buildah-image: quay.io/containers/buildah:v1.43.1@sha256:f48d0f1b10486488f711f9a63da12e8f228b320ce0aeb0f66bbea68fd2f9900b
           containerfiles: |
             ${{ inputs.containerfile_path }}
           image: ${{ inputs.image_name }}
@@ -82,7 +82,7 @@ jobs:
         id: build
         uses: redhat-actions/buildah-build@3a51aade9afa17e5c78256bcbe2e1ee08c7b995b # v3.0.2
         with:
-          buildah-image: quay.io/containers/buildah:v1.43.1:@sha256:f48d0f1b10486488f711f9a63da12e8f228b320ce0aeb0f66bbea68
+          buildah-image: quay.io/containers/buildah:v1.43.1@sha256:f48d0f1b10486488f711f9a63da12e8f228b320ce0aeb0f66bbea68fd2f9900b
           containerfiles: |
             ${{ inputs.containerfile_path }}
           image: ${{ inputs.image_name }}
