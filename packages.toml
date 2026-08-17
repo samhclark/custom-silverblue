@@ -31,6 +31,9 @@ install = [
   # Real upstream Google Chrome. Being in a Flatpak breaks its sandbox.
   "google-chrome-stable",
 
+  # For Mullvad VPN tray indicator
+  "libappindicator-gtk3",
+  
   "libkrun",
 
   "mullvad-vpn",

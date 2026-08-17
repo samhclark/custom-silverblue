@@ -12,6 +12,13 @@ RUN mkdir -p /var/opt \
     && echo 'L /opt/google - - - - /usr/lib/opt/google' > /usr/lib/tmpfiles.d/google-chrome.conf \
     && echo 'L /var/opt/google - - - - /usr/lib/opt/google' >> /usr/lib/tmpfiles.d/google-chrome.conf
 
+    # Config for install Mullvad VPN GUI
+RUN mkdir -p /var/opt \
+    && mkdir -p '/usr/lib/opt/Mullvad VPN' \
+    && ln -s '/usr/lib/opt/Mullvad VPN' '/var/opt/Mullvad VPN' \
+    && echo "L '/opt/Mullvad VPN' - - - - '/usr/lib/opt/Mullvad VPN'" > /usr/lib/tmpfiles.d/mullvad-vpn.conf \
+    && echo "L '/var/opt/Mullvad VPN' - - - - '/usr/lib/opt/Mullvad VPN'" >> /usr/lib/tmpfiles.d/mullvad-vpn.conf.conf
+
 # Install the packages
 # Copy up the SELinux policy store before package scriptlets modify it. Keeping
 # the policy transaction in this layer avoids cross-layer rename failures.
