@@ -12,7 +12,7 @@ env:
 jobs:
   lint:
     name: Lint and test Python
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
     steps:
       - name: Checkout
