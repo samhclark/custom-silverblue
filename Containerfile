@@ -16,8 +16,8 @@ RUN mkdir -p /var/opt \
 RUN mkdir -p /var/opt \
     && mkdir -p '/usr/lib/opt/Mullvad VPN' \
     && ln -s '/usr/lib/opt/Mullvad VPN' '/var/opt/Mullvad VPN' \
-    && echo "L '/opt/Mullvad VPN' - - - - '/usr/lib/opt/Mullvad VPN'" > /usr/lib/tmpfiles.d/mullvad-vpn.conf \
-    && echo "L '/var/opt/Mullvad VPN' - - - - '/usr/lib/opt/Mullvad VPN'" >> /usr/lib/tmpfiles.d/mullvad-vpn.conf.conf
+    && echo 'L /opt/Mullvad\x20VPN - - - - /usr/lib/opt/Mullvad\x20VPN' > /usr/lib/tmpfiles.d/mullvad-vpn.conf \
+    && echo 'L /var/opt/Mullvad\x20VPN - - - - /usr/lib/opt/Mullvad\x20VPN' >> /usr/lib/tmpfiles.d/mullvad-vpn.conf.conf
 
 # Install the packages
 # Copy up the SELinux policy store before package scriptlets modify it. Keeping
