@@ -7,6 +7,8 @@ groups = [
 
 [packages]
 install = [
+  "1password", 
+  
   # bootc virtualization kit
   "bcvk",
 
