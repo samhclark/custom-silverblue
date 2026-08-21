@@ -1,9 +1,11 @@
 ARG silverblue_version=44
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
-COPY overlay-root/ /
-COPY secret-run/secret_run.py /usr/bin/secret-run
-COPY secret-run/laptop-backup.sh /usr/bin/laptop-backup
+# These are the only overlay files needed before the package transaction. Keep
+# the rest of the overlay below it so runtime-only changes don't invalidate the
+# expensive package layer.
+COPY overlay-root/etc/pki/rpm-gpg/ /etc/pki/rpm-gpg/
+COPY overlay-root/etc/yum.repos.d/ /etc/yum.repos.d/
 
 # There are two pieces to getting GUI apps that use `/opt` to work on atomic distros, and
 # note that the /opt -> /var/opt symlink already exists by default in the container image.
@@ -32,14 +34,14 @@ RUN mkdir -p /var/opt \
     && mkdir -p '/usr/lib/opt/Mullvad VPN' \
     && ln -s '/usr/lib/opt/Mullvad VPN' '/var/opt/Mullvad VPN' \
     && echo 'L /opt/Mullvad\x20VPN - - - - /usr/lib/opt/Mullvad\x20VPN' > /usr/lib/tmpfiles.d/mullvad-vpn.conf \
-    && echo 'L /var/opt/Mullvad\x20VPN - - - - /usr/lib/opt/Mullvad\x20VPN' >> /usr/lib/tmpfiles.d/mullvad-vpn.conf.conf
+    && echo 'L /var/opt/Mullvad\x20VPN - - - - /usr/lib/opt/Mullvad\x20VPN' >> /usr/lib/tmpfiles.d/mullvad-vpn.conf
 
 # 1Password GUI
 RUN mkdir -p /var/opt && \
     mkdir -p /usr/lib/opt/1Password && \
     ln -s /usr/lib/opt/1Password /var/opt/1Password && \
     echo 'L /opt/1Password - - - - /usr/lib/opt/1Password' > /usr/lib/tmpfiles.d/1password.conf && \
-    echo 'L /var/opt/1Password - - - - /usr/lib/opt/1Password' >> /usr/lib/tmpfiles.d/1password.conf.conf
+    echo 'L /var/opt/1Password - - - - /usr/lib/opt/1Password' >> /usr/lib/tmpfiles.d/1password.conf
 
 # And 1Password adds some groups too
 RUN printf 'g onepassword -\ng onepassword-mcp -\n' > /usr/lib/sysusers.d/1password.conf
@@ -59,6 +61,12 @@ RUN --mount=type=bind,source=packages.toml,target=/packages.toml,z \
     && systemctl enable mullvad-daemon \
     && dnf clean all \
     && rm /var/{log,cache,lib}/* -rf
+
+# Everything after the package transaction is either runtime content or
+# metadata. Changes here should reuse the package layer above.
+COPY overlay-root/ /
+COPY secret-run/secret_run.py /usr/bin/secret-run
+COPY secret-run/laptop-backup.sh /usr/bin/laptop-backup
 
 RUN ["bootc", "container", "lint"]
 

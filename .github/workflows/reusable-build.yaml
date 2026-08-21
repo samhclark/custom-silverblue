@@ -13,6 +13,9 @@ on:
       image_name:
         required: true
         type: string
+      cache_ref:
+        required: true
+        type: string
       tags:
         required: true
         type: string
@@ -44,6 +47,12 @@ jobs:
             quay.io/fedora-ostree-desktops/silverblue:{}
           each: ${{ inputs.tags }}
 
+      - name: Log in to Container Registry for build cache
+        shell: bash
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "${REGISTRY_TOKEN}" | ./log-in-to-registry.sh "${{ github.actor }}" "${{ inputs.registry }}/${{ inputs.namespace }}"
+
       - name: Build image
         id: build
         uses: redhat-actions/buildah-build@3a51aade9afa17e5c78256bcbe2e1ee08c7b995b # v3.0.2
@@ -53,6 +62,10 @@ jobs:
             ${{ inputs.containerfile_path }}
           image: ${{ inputs.image_name }}
           tags: ${{ inputs.tags }}
+          layers: true
+          squash: false
+          extra-args: |
+            --cache-from ${{ inputs.cache_ref }}
 
   build-sign-push-custom-silverblue:
     name: Build, sign, then push
@@ -72,6 +85,12 @@ jobs:
             quay.io/fedora-ostree-desktops/silverblue:{}
           each: ${{ inputs.tags }}
 
+      - name: Log in to Container Registry for build cache
+        shell: bash
+        env:
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "${REGISTRY_TOKEN}" | ./log-in-to-registry.sh "${{ github.actor }}" "${{ inputs.registry }}/${{ inputs.namespace }}"
+
       - name: Build image
         id: build
         uses: redhat-actions/buildah-build@3a51aade9afa17e5c78256bcbe2e1ee08c7b995b # v3.0.2
@@ -81,12 +100,11 @@ jobs:
             ${{ inputs.containerfile_path }}
           image: ${{ inputs.image_name }}
           tags: ${{ inputs.tags }}
-
-      - name: Log in to Container Registry
-        shell: bash
-        env:
-          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: printf '%s' "${REGISTRY_TOKEN}" | ./log-in-to-registry.sh "${{ github.actor }}" "${{ inputs.registry }}/${{ inputs.namespace }}"
+          layers: true
+          squash: false
+          extra-args: |
+            --cache-from ${{ inputs.cache_ref }}
+            --cache-to ${{ inputs.cache_ref }}
 
       - name: Push to Container Registry
         uses: redhat-actions/push-to-registry@94ade333c38ecc0e60e94785125d9a52ca423b37 # v3.0.0
