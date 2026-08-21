@@ -47,23 +47,13 @@ class BuildContractTests(unittest.TestCase):
             package_layer,
         )
 
-    def test_ci_preserves_layers_and_configures_remote_cache(self):
+    def test_ci_preserves_layers_and_omits_remote_cache(self):
         self.assertIn("layers: true", WORKFLOW)
         self.assertIn("squash: false", WORKFLOW)
-        self.assertIn("--cache-from ${{ inputs.cache_ref }}", WORKFLOW)
-        self.assertIn("--cache-to ${{ inputs.cache_ref }}", WORKFLOW)
-        self.assertIn("cache_ref:", MAIN_WORKFLOW)
-
-        cache_refs = [
-            line.split("cache_ref:", 1)[1].strip()
-            for line in MAIN_WORKFLOW.splitlines()
-            if "cache_ref:" in line
-        ]
-        self.assertTrue(cache_refs)
-        self.assertTrue(
-            all(":" not in ref.rsplit("/", 1)[-1] for ref in cache_refs)
-        )
-        self.assertTrue(all("@" not in ref for ref in cache_refs))
+        self.assertNotIn("cache_ref:", WORKFLOW)
+        self.assertNotIn("cache_ref:", MAIN_WORKFLOW)
+        self.assertNotIn("--cache-from", WORKFLOW)
+        self.assertNotIn("--cache-to", WORKFLOW)
 
 
 if __name__ == "__main__":

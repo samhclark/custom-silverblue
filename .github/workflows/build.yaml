@@ -33,13 +33,11 @@ jobs:
     uses: ./.github/workflows/reusable-build.yaml
     permissions:
       contents: read
-      packages: read
     with:
       containerfile_path: ./Containerfile
       registry: ghcr.io
       namespace: samhclark
       image_name: custom-silverblue
-      cache_ref: ghcr.io/samhclark/custom-silverblue/build-cache
       tags: |
         44
       publish: false
@@ -58,7 +56,6 @@ jobs:
       registry: ghcr.io
       namespace: samhclark
       image_name: custom-silverblue
-      cache_ref: ghcr.io/samhclark/custom-silverblue/build-cache
       tags: |
         44
       publish: true
