@@ -39,7 +39,7 @@ jobs:
       registry: ghcr.io
       namespace: samhclark
       image_name: custom-silverblue
-      cache_ref: ghcr.io/samhclark/custom-silverblue-build-cache
+      cache_ref: ghcr.io/samhclark/custom-silverblue/build-cache
       tags: |
         44
       publish: false
@@ -58,7 +58,7 @@ jobs:
       registry: ghcr.io
       namespace: samhclark
       image_name: custom-silverblue
-      cache_ref: ghcr.io/samhclark/custom-silverblue-build-cache
+      cache_ref: ghcr.io/samhclark/custom-silverblue/build-cache
       tags: |
         44
       publish: true
