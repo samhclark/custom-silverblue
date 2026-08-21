@@ -54,6 +54,17 @@ class BuildContractTests(unittest.TestCase):
         self.assertIn("--cache-to ${{ inputs.cache_ref }}", WORKFLOW)
         self.assertIn("cache_ref:", MAIN_WORKFLOW)
 
+        cache_refs = [
+            line.split("cache_ref:", 1)[1].strip()
+            for line in MAIN_WORKFLOW.splitlines()
+            if "cache_ref:" in line
+        ]
+        self.assertTrue(cache_refs)
+        self.assertTrue(
+            all(":" not in ref.rsplit("/", 1)[-1] for ref in cache_refs)
+        )
+        self.assertTrue(all("@" not in ref for ref in cache_refs))
+
 
 if __name__ == "__main__":
     unittest.main()
