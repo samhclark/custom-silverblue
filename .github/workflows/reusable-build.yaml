@@ -30,7 +30,7 @@ jobs:
   build-custom-silverblue:
     name: Build
     if: ${{ ! inputs.publish }}
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -59,7 +59,7 @@ jobs:
   build-sign-push-custom-silverblue:
     name: Build, sign, then push
     if: ${{ inputs.publish }}
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-24.04
     environment: release
 
     steps:
