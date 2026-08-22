@@ -36,6 +36,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Remove fuse-overlayfs
+        run: |
+          while p=$(command -v fuse-overlayfs 2>/dev/null); do sudo rm -f "$p"; done
+
       - name: Verify base image signature
         uses: samhclark/cosign-exec-action@f8a4f58b424b15fa5fee1795fd25e6de48f9609d # v1.1.0
         with:
@@ -48,7 +52,6 @@ jobs:
         id: build
         uses: redhat-actions/buildah-build@3a51aade9afa17e5c78256bcbe2e1ee08c7b995b # v3.0.2
         with:
-          buildah-image: quay.io/containers/buildah:v1.43.1@sha256:f48d0f1b10486488f711f9a63da12e8f228b320ce0aeb0f66bbea68fd2f9900b
           containerfiles: |
             ${{ inputs.containerfile_path }}
           image: ${{ inputs.image_name }}
@@ -65,6 +68,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Remove fuse-overlayfs
+        run: |
+          while p=$(command -v fuse-overlayfs 2>/dev/null); do sudo rm -f "$p"; done
 
       - name: Verify base image signature
         uses: samhclark/cosign-exec-action@f8a4f58b424b15fa5fee1795fd25e6de48f9609d # v1.1.0
@@ -84,7 +91,6 @@ jobs:
         id: build
         uses: redhat-actions/buildah-build@3a51aade9afa17e5c78256bcbe2e1ee08c7b995b # v3.0.2
         with:
-          buildah-image: quay.io/containers/buildah:v1.43.1@sha256:f48d0f1b10486488f711f9a63da12e8f228b320ce0aeb0f66bbea68fd2f9900b
           containerfiles: |
             ${{ inputs.containerfile_path }}
           image: ${{ inputs.image_name }}
