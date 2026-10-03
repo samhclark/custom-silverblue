@@ -1,13 +1,15 @@
-name: Build bootc image
+name: Release bootc image
+
 on:
-  pull_request:
-  merge_group:
-  schedule:
-    - cron: '48 3 * * *'  # 3am-ish UTC everyday 
   workflow_dispatch:
 
 permissions:
   contents: read
+
+# Let a release finish signing before another release can update the same tag.
+concurrency:
+  group: release-custom-silverblue
+  cancel-in-progress: false
 
 env:
   UV_VERSION: "0.11.17"
@@ -15,6 +17,7 @@ env:
 jobs:
   lint:
     name: Lint and test Python
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -29,11 +32,16 @@ jobs:
       - name: Test
         run: make test
 
-  build-custom-silverblue:
-    name: Build image
+  publish-custom-silverblue:
+    name: Build, sign, and publish image
+    needs: lint
+    if: ${{ github.ref == 'refs/heads/main' }}
     uses: ./.github/workflows/reusable-build.yaml
     permissions:
+      attestations: write
       contents: read
+      id-token: write
+      packages: write
     with:
       containerfile_path: ./Containerfile
       registry: ghcr.io
@@ -41,4 +49,7 @@ jobs:
       image_name: custom-silverblue
       tags: |
         44
-      publish: false
+      publish: true
+    secrets:
+      cosign_password: ${{ secrets.COSIGN_PASSWORD }}
+      cosign_private_key: ${{ secrets.COSIGN_PRIVATE_KEY }}

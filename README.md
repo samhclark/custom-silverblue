@@ -4,6 +4,29 @@ Following Jorge Castro's lead and making my own spin on Silverblue
 
 [![Build bootc image](https://github.com/samhclark/custom-silverblue/actions/workflows/build.yaml/badge.svg)](https://github.com/samhclark/custom-silverblue/actions/workflows/build.yaml)
 
+## Building and releasing
+
+The daily scheduled workflow builds the image and runs the Python checks and
+tests. Pull requests, merge groups, and manual runs of **Build bootc image** do
+the same. These runs do not publish images or receive production signing secrets.
+
+When ready to update, run **Release bootc image** from the Actions tab with
+`main` selected, or use:
+
+```bash
+gh workflow run release.yaml --ref main
+```
+
+The release workflow runs checks and tests, rebuilds the image, pushes it to
+`ghcr.io/samhclark/custom-silverblue:44`, creates an attestation, signs the image,
+and verifies its signature using the public key shipped in the image. It rebuilds
+using the base image and packages available at release time; it does not reuse a
+scheduled build. Releases run one at a time so their pushes and signatures cannot
+overlap.
+
+The publishing job uses the `release` environment, restricted to the `main`
+branch with no required reviewers. Manual dispatch is the release approval.
+
 ## Rebasing onto this image
 
 This bootstrapping process helps get the public keys onto your machine 

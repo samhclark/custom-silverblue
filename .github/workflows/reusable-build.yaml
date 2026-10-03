@@ -60,8 +60,8 @@ jobs:
           squash: false
 
   build-sign-push-custom-silverblue:
-    name: Build, sign, then push
-    if: ${{ inputs.publish }}
+    name: Build, push, sign, and verify
+    if: ${{ inputs.publish && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-24.04
     environment: release
 
@@ -125,6 +125,14 @@ jobs:
             sign --yes --key=env://COSIGN_PRIVATE_KEY --new-bundle-format=false --use-signing-config=false
             ${{ inputs.registry }}/${{ inputs.namespace }}/${{ inputs.image_name }}:{}@${{ steps.push.outputs.digest }}
           each: ${{ inputs.tags }}
+
+      - name: Verify the published OCI image signature
+        uses: samhclark/cosign-exec-action@fd4c037a25705e60a8ba5cf337e48e2088479dd8 # v1.1.1
+        with:
+          registry-token: ${{ secrets.GITHUB_TOKEN }}
+          args: >-
+            verify --key overlay-root/etc/pki/cosign/cosign.pub
+            ${{ inputs.registry }}/${{ inputs.namespace }}/${{ inputs.image_name }}@${{ steps.push.outputs.digest }}
 
       - name: Echo outputs for auditing
         run: |
