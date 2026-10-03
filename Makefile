@@ -15,6 +15,7 @@ TAG        ?= 44
 PYTHON ?= python3
 UVX    ?= uvx
 PODMAN ?= podman
+GH     ?= gh
 
 RUFF_VERSION ?= 0.15.15
 TY_VERSION   ?= 0.0.40
@@ -86,9 +87,9 @@ build: ## Build the bootc container image
 	@printf "$(COLOR_GREEN)build succeeded: $(IMAGE_NAME):$(TAG)$(COLOR_RESET)\n"
 
 .PHONY: publish
-publish: ## Push the container image to the registry (requires prior login)
-	$(PODMAN) push $(REGISTRY)/$(NAMESPACE)/$(IMAGE_NAME):$(TAG)
-	@printf "$(COLOR_GREEN)publish succeeded: $(REGISTRY)/$(NAMESPACE)/$(IMAGE_NAME):$(TAG)$(COLOR_RESET)\n"
+publish: ## Start the GitHub release workflow on main (requires gh authentication)
+	$(GH) workflow run release.yaml --repo samhclark/custom-silverblue --ref main
+	@printf "$(COLOR_GREEN)Release requested. Follow progress: https://github.com/samhclark/custom-silverblue/actions/workflows/release.yaml$(COLOR_RESET)\n"
 
 ##@ Dependencies
 

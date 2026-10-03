@@ -14,8 +14,12 @@ When ready to update, run **Release bootc image** from the Actions tab with
 `main` selected, or use:
 
 ```bash
-gh workflow run release.yaml --ref main
+make publish
 ```
+
+This requires an authenticated GitHub CLI (`gh auth login`). It dispatches the
+release workflow on `main` and prints a link to follow progress; publishing
+finishes asynchronously on GitHub.
 
 The release workflow runs checks and tests, rebuilds the image, pushes it to
 `ghcr.io/samhclark/custom-silverblue:44`, creates an attestation, signs the image,
