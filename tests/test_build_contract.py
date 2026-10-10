@@ -93,6 +93,10 @@ class BuildContractTests(unittest.TestCase):
             "verify --key overlay-root/etc/pki/cosign/cosign.pub", verification_step
         )
         self.assertIn("@${{ steps.push.outputs.digest }}", verification_step)
+        # Verification must use the legacy format required by the image clients.
+        signing_step = WORKFLOW[sign:verify]
+        self.assertIn("--new-bundle-format=false", signing_step)
+        self.assertIn("--new-bundle-format=false", verification_step)
 
 
 if __name__ == "__main__":
