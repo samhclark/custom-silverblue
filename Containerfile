@@ -1,4 +1,4 @@
-ARG silverblue_version=44
+ARG silverblue_version=45
 FROM quay.io/fedora-ostree-desktops/silverblue:${silverblue_version}
 
 # These are the only overlay files needed before the package transaction. Keep

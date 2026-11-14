@@ -40,5 +40,5 @@ jobs:
       namespace: samhclark
       image_name: custom-silverblue
       tags: |
-        44
+        45
       publish: false

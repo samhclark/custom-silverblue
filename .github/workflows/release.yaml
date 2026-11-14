@@ -48,7 +48,7 @@ jobs:
       namespace: samhclark
       image_name: custom-silverblue
       tags: |
-        44
+        45
       publish: true
     secrets:
       cosign_password: ${{ secrets.COSIGN_PASSWORD }}

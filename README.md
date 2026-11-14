@@ -22,7 +22,7 @@ release workflow on `main` and prints a link to follow progress; publishing
 finishes asynchronously on GitHub.
 
 The release workflow runs checks and tests, rebuilds the image, pushes it to
-`ghcr.io/samhclark/custom-silverblue:44`, creates an attestation, signs the image,
+`ghcr.io/samhclark/custom-silverblue:45`, creates an attestation, signs the image,
 and verifies its signature using the public key shipped in the image. It rebuilds
 using the base image and packages available at release time; it does not reuse a
 scheduled build. Releases run one at a time so their pushes and signatures cannot
@@ -39,7 +39,7 @@ and makes sure everything is configured right.
 From another Silverblue based image, first, rebase onto the _unverified_ image.
 
 ```
-sudo bootc switch ghcr.io/samhclark/custom-silverblue:44
+sudo bootc switch ghcr.io/samhclark/custom-silverblue:45
 ```
 
 Optional: Manually verify that the image you just rebased onto is signed.
@@ -61,7 +61,7 @@ Assuming it succeeded, then reboot: `systemctl reboot`.
 After that, rebase onto the signed image. 
 
 ```
-sudo bootc switch --enforce-container-sigpolicy ghcr.io/samhclark/custom-silverblue:44
+sudo bootc switch --enforce-container-sigpolicy ghcr.io/samhclark/custom-silverblue:45
 ```
 
 ## Google Linux Signing Keys

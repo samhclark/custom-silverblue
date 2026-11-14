@@ -9,7 +9,7 @@
 REGISTRY   ?= ghcr.io
 NAMESPACE  ?= samhclark
 IMAGE_NAME ?= custom-silverblue
-TAG        ?= 44
+TAG        ?= 45
 
 ## Tool variables (override on the command line, e.g. make build PODMAN=buildah)
 PYTHON ?= python3
